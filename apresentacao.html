@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IB na Prática — Mercado de Capitais</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0a0f1e;
+    color: #e8eaf6;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── SLIDE CONTAINER ── */
+  #deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    display: none;
+    position: absolute;
+    inset: 0;
+    padding: 60px 80px;
+    flex-direction: column;
+    justify-content: center;
+    animation: fadeIn .35s ease;
+  }
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ── BACKGROUNDS ── */
+  .bg-dark  { background: linear-gradient(135deg, #0a0f1e 0%, #0d1530 100%); }
+  .bg-title { background: linear-gradient(135deg, #0d1b3e 0%, #1a237e 60%, #0d47a1 100%); }
+  .bg-green { background: linear-gradient(135deg, #0a1f0f 0%, #0d2818 100%); }
+  .bg-gold  { background: linear-gradient(135deg, #1a1200 0%, #2d1f00 100%); }
+  .bg-fidc  { background: linear-gradient(135deg, #1a0a2e 0%, #2d0059 60%, #1a0a2e 100%); }
+
+  /* ── ACCENT LINE ── */
+  .accent {
+    display: inline-block;
+    width: 60px; height: 4px;
+    background: #1e88e5;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+  .accent.gold { background: #f9a825; }
+  .accent.green { background: #43a047; }
+  .accent.purple { background: #8e24aa; }
+
+  /* ── TYPOGRAPHY ── */
+  h1 { font-size: 3.6rem; font-weight: 700; line-height: 1.15; color: #fff; }
+  h2 { font-size: 2.5rem; font-weight: 700; color: #fff; margin-bottom: 32px; }
+  h3 { font-size: 1.4rem; font-weight: 600; color: #90caf9; margin-bottom: 12px; }
+  p, li { font-size: 1.15rem; line-height: 1.7; color: #cfd8dc; }
+  .subtitle { font-size: 1.45rem; color: #90caf9; margin-top: 12px; }
+  .label { font-size: 0.85rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #546e7a; margin-bottom: 6px; }
+  .big { font-size: 1.35rem; }
+  strong { color: #fff; }
+
+  /* ── AGENDA ── */
+  .agenda-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+  .agenda-list li {
+    display: flex; align-items: center; gap: 20px;
+    font-size: 1.25rem; color: #cfd8dc;
+  }
+  .agenda-num {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #1e3a5f; color: #90caf9;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem; flex-shrink: 0;
+  }
+  .agenda-list li.highlight .agenda-num { background: #8e24aa; color: #fff; }
+  .agenda-list li.highlight { color: #ce93d8; font-weight: 600; }
+
+  /* ── TABLES ── */
+  table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
+  th {
+    background: #1a2744; color: #90caf9;
+    padding: 10px 14px; text-align: left;
+    font-size: .9rem; letter-spacing: .08em; text-transform: uppercase;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid #1a2744; color: #cfd8dc; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #0d1530; }
+
+  /* ── CARDS ── */
+  .cards { display: flex; gap: 20px; }
+  .card {
+    flex: 1; background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px; padding: 24px;
+  }
+  .card h3 { font-size: 1.1rem; }
+  .card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .card li::before { content: '→ '; color: #1e88e5; }
+  .card li { font-size: 1.02rem; }
+  .card.highlight { border-color: #1e88e5; background: rgba(30,136,229,.08); }
+  .card.gold-card { border-color: #f9a825; background: rgba(249,168,37,.06); }
+  .card.purple-card { border-color: #8e24aa; background: rgba(142,36,170,.08); }
+
+  /* ── FLOW ── */
+  .flow { display: flex; align-items: stretch; gap: 0; margin-top: 8px; }
+  .flow-step {
+    flex: 1; background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 0; padding: 24px 20px;
+    position: relative; text-align: center;
+  }
+  .flow-step:first-child { border-radius: 12px 0 0 12px; }
+  .flow-step:last-child  { border-radius: 0 12px 12px 0; }
+  .flow-step h3 { font-size: 1rem; color: #fff; margin-bottom: 8px; }
+  .flow-step ul { list-style: none; text-align: left; }
+  .flow-step li { font-size: .95rem; color: #b0bec5; padding: 3px 0; }
+  .flow-step li::before { content: '• '; color: #1e88e5; }
+  .arrow {
+    display: flex; align-items: center;
+    color: #1e88e5; font-size: 1.6rem; padding: 0 4px;
+    align-self: center;
+  }
+  .step-num {
+    display: inline-block; width: 32px; height: 32px; border-radius: 50%;
+    background: #1e3a5f; color: #90caf9; line-height: 32px;
+    font-weight: 700; font-size: .9rem; margin-bottom: 10px;
+  }
+
+  /* ── FIDC STRUCTURE ── */
+  .fidc-diagram {
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+    margin: 12px 0;
+  }
+  .fidc-box {
+    background: rgba(142,36,170,.15); border: 1px solid #8e24aa;
+    border-radius: 10px; padding: 12px 40px; font-weight: 700; color: #ce93d8;
+    font-size: 1rem; text-align: center;
+  }
+  .fidc-box.cedente { background: rgba(30,136,229,.12); border-color: #1e88e5; color: #90caf9; }
+  .fidc-cotas {
+    display: flex; gap: 30px; align-items: flex-start;
+  }
+  .fidc-cota {
+    background: rgba(255,255,255,.04); border-radius: 10px;
+    padding: 16px 24px; text-align: center; border: 1px solid rgba(255,255,255,.1);
+    min-width: 160px;
+  }
+  .fidc-cota.senior { border-color: #43a047; }
+  .fidc-cota.sub { border-color: #f9a825; }
+  .fidc-cota h4 { font-size: 1rem; margin-bottom: 6px; }
+  .fidc-cota.senior h4 { color: #81c784; }
+  .fidc-cota.sub h4 { color: #ffcc02; }
+  .fidc-cota p { font-size: .88rem; color: #90a4ae; }
+  .connector {
+    width: 2px; height: 28px; background: rgba(255,255,255,.2);
+    margin: 0 auto;
+  }
+  .connector-h {
+    display: flex; align-items: center; gap: 0;
+    width: 100%;
+  }
+  .connector-line {
+    height: 2px; background: rgba(255,255,255,.2); flex: 1;
+  }
+  .connector-v { width: 2px; height: 20px; background: rgba(255,255,255,.2); }
+
+  /* ── HIGHLIGHT BOX ── */
+  .callout {
+    background: rgba(30,136,229,.1); border-left: 4px solid #1e88e5;
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin-top: 20px;
+    font-size: 1.05rem; color: #b3d4f5;
+  }
+  .callout.purple { background: rgba(142,36,170,.12); border-color: #8e24aa; color: #ce93d8; }
+  .callout.gold   { background: rgba(249,168,37,.1);  border-color: #f9a825; color: #ffe082; }
+  .callout.green  { background: rgba(67,160,71,.1);   border-color: #43a047; color: #a5d6a7; }
+
+  /* ── TWO COLUMNS ── */
+  .cols { display: flex; gap: 40px; align-items: flex-start; }
+  .col  { flex: 1; }
+  .divider { width: 1px; background: rgba(255,255,255,.1); align-self: stretch; }
+
+  /* ── PILL TAGS ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .tag {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px; padding: 4px 14px; font-size: .92rem; color: #b0bec5;
+  }
+  .tag.blue   { border-color: #1e88e5; color: #90caf9; background: rgba(30,136,229,.1); }
+  .tag.green  { border-color: #43a047; color: #81c784; background: rgba(67,160,71,.08); }
+  .tag.purple { border-color: #8e24aa; color: #ce93d8; background: rgba(142,36,170,.08); }
+
+  /* ── DISCUSSION ── */
+  .q-list { display: flex; flex-direction: column; gap: 14px; }
+  .q-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: rgba(255,255,255,.04); border-radius: 10px; padding: 14px 18px;
+    border: 1px solid rgba(255,255,255,.07);
+  }
+  .q-num {
+    min-width: 36px; height: 36px; border-radius: 50%;
+    background: #1a2744; color: #90caf9;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .9rem;
+  }
+  .q-item p { font-size: .96rem; color: #cfd8dc; padding-top: 6px; }
+
+  /* ── NAV ── */
+  #nav {
+    position: fixed; bottom: 30px; right: 40px;
+    display: flex; align-items: center; gap: 12px; z-index: 99;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    color: #fff; width: 42px; height: 42px; border-radius: 50%;
+    font-size: 1.1rem; cursor: pointer; transition: background .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-btn:hover { background: rgba(30,136,229,.4); border-color: #1e88e5; }
+  #counter { font-size: .82rem; color: #546e7a; min-width: 60px; text-align: center; }
+
+  /* ── PROGRESS ── */
+  #progress {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 3px; background: rgba(255,255,255,.06);
+  }
+  #progress-bar { height: 100%; background: #1e88e5; transition: width .3s ease; }
+
+  /* ── LOGO TAG ── */
+  .slide-tag {
+    position: absolute; top: 28px; right: 40px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+    color: #37474f; text-transform: uppercase;
+  }
+
+  /* ── STEPS LIST ── */
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    font-size: .9rem;
+  }
+  .step-badge {
+    min-width: 28px; height: 28px; border-radius: 6px;
+    background: #1a2744; color: #90caf9;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .78rem; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-item p { color: #b0bec5; line-height: 1.5; }
+  .step-item strong { color: #e0e0e0; }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- ════ SLIDE 1 — TÍTULO ════ -->
+  <div class="slide active bg-title">
+    <div class="slide-tag">IB na Prática</div>
+    <div style="max-width:720px;">
+      <div class="label">Mercado de Capitais</div>
+      <h1>Do Básico ao FIDC</h1>
+      <p class="subtitle">Originação · Estruturação · Distribuição</p>
+      <div style="margin-top:48px; display:flex; gap:32px;">
+        <div>
+          <div class="label">Data</div>
+          <p style="color:#e8eaf6;">22 de junho de 2026</p>
+        </div>
+        <div>
+          <div class="label">Curso</div>
+          <p style="color:#e8eaf6;">IB na Prática</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 2 — AGENDA ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>Agenda</h2>
+    <ul class="agenda-list">
+      <li><div class="agenda-num">1</div>O que é o Mercado de Capitais e para que serve</li>
+      <li><div class="agenda-num">2</div>Modalidades de captação: Crédito e Equity</li>
+      <li><div class="agenda-num">3</div>O processo de IB: Originação → Estruturação → Distribuição</li>
+      <li class="highlight"><div class="agenda-num">4</div>FIDC — Fundo de Investimento em Direitos Creditórios</li>
+      <li><div class="agenda-num">5</div>Discussão</li>
+    </ul>
+  </div>
+
+  <!-- ════ SLIDE 3 — O QUE É MKT CAPITAIS ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>O que é o Mercado de Capitais?</h2>
+    <p class="big">É o conjunto de instituições, instrumentos e mecanismos que permitem que <strong>poupadores</strong> direcionem recursos para quem precisa deles — empresas, governo, projetos.</p>
+    <div class="callout" style="margin-top:28px;">
+      Diferente do crédito bancário, no mercado de capitais o <strong>risco é transferido diretamente ao investidor</strong> — não fica no balanço de um banco.
+    </div>
+    <div class="cards" style="margin-top:28px;">
+      <div class="card">
+        <h3>Volume</h3>
+        <p style="font-size:.9rem;">Mobiliza mais recursos do que o crédito bancário permite isoladamente</p>
+      </div>
+      <div class="card">
+        <h3>Prazo</h3>
+        <p style="font-size:.9rem;">Permite financiamentos longos — infra, imóveis, projetos de 10+ anos</p>
+      </div>
+      <div class="card">
+        <h3>Custo</h3>
+        <p style="font-size:.9rem;">Spread menor quando a estrutura reflete o risco real do ativo</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 4 — PARA QUE SERVE ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>Para que serve?</h2>
+    <table>
+      <tr>
+        <th>Para quem <strong>capta</strong></th>
+        <th>Para quem <strong>investe</strong></th>
+      </tr>
+      <tr><td>Financiar crescimento (capex, expansão)</td><td>Rentabilizar capital acima do CDI</td></tr>
+      <tr><td>Alongar dívida existente</td><td>Acessar retornos de crédito privado</td></tr>
+      <tr><td>Reduzir custo financeiro</td><td>Diversificar portfólio</td></tr>
+      <tr><td>Monetizar ativos (securitização)</td><td>Ter exposição à economia real</td></tr>
+      <tr><td>Abrir capital / dar liquidez a sócios</td><td>Participar do upside de empresas</td></tr>
+    </table>
+    <div class="callout" style="margin-top:24px;">
+      <strong>Reguladores:</strong> Banco Central (sistema monetário) · CVM (mercado de capitais)
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 5 — MODALIDADES OVERVIEW ════ -->
+  <div class="slide bg-green">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent green"></div>
+    <h2>Modalidades de Captação</h2>
+    <div class="cards">
+      <div class="card highlight" style="border-color:#1e88e5;">
+        <h3 style="color:#90caf9; font-size:1.2rem;">DÍVIDA (Crédito)</h3>
+        <ul style="margin-top:12px;">
+          <li>Empresa paga juros + principal</li>
+          <li>Não dilui os sócios</li>
+          <li>Credores têm preferência na liquidação</li>
+          <li>Protegida por covenants e garantias</li>
+          <li>Bancária ou mercado de capitais</li>
+        </ul>
+      </div>
+      <div class="card gold-card">
+        <h3 style="color:#ffe082; font-size:1.2rem;">EQUITY (Capital Próprio)</h3>
+        <ul style="margin-top:12px;">
+          <li>Empresa vende participação societária</li>
+          <li>Dilui os sócios atuais</li>
+          <li>Sem obrigação de pagamento</li>
+          <li>Sócio participa dos lucros e perdas</li>
+          <li>Privado (PE/VC) ou público (IPO)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout green" style="margin-top:28px;">
+      <strong>Decisão do CFO:</strong> custo de capital, diluição, alavancagem, prazo e covenants que cada alternativa traz.
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 6 — DÍVIDA ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>Dívida no Mercado de Capitais</h2>
+    <table>
+      <tr>
+        <th>Instrumento</th>
+        <th>Emissor</th>
+        <th>Uso típico</th>
+        <th>Destaque</th>
+      </tr>
+      <tr><td><strong>Debênture</strong></td><td>S/A</td><td>Capex, refi, M&amp;A</td><td>Mais versátil</td></tr>
+      <tr><td><strong>Debênture Incentivada</strong></td><td>S/A infra</td><td>Projetos de infraestrutura</td><td>Isenção IR PF</td></tr>
+      <tr><td><strong>CRI</strong></td><td>Securitizadora</td><td>Setor imobiliário</td><td>Isenção IR PF</td></tr>
+      <tr><td><strong>CRA</strong></td><td>Securitizadora</td><td>Agronegócio</td><td>Isenção IR PF</td></tr>
+      <tr><td><strong>FIDC</strong></td><td>Fundo</td><td>Recebíveis — qualquer setor</td><td>Securitização</td></tr>
+    </table>
+    <div class="tags" style="margin-top:20px;">
+      <span class="tag blue">Seniority</span>
+      <span class="tag blue">Covenants</span>
+      <span class="tag blue">Rating</span>
+      <span class="tag blue">Garantias reais</span>
+      <span class="tag blue">Cessão fiduciária</span>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 7 — EQUITY ════ -->
+  <div class="slide bg-gold">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent gold"></div>
+    <h2>Equity</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Privado (antes do IPO)</h3>
+        <table>
+          <tr><th>Estágio</th><th>Modalidade</th></tr>
+          <tr><td>Ideia / MVP</td><td>Seed · Angel</td></tr>
+          <tr><td>Crescimento</td><td>Venture Capital</td></tr>
+          <tr><td>Empresa madura</td><td>Private Equity</td></tr>
+          <tr><td>S/A fechada ou listada</td><td>PIPE</td></tr>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3>Público (mercado)</h3>
+        <table>
+          <tr><th>Instrumento</th><th>Descrição</th></tr>
+          <tr><td><strong>IPO</strong></td><td>Abertura de capital</td></tr>
+          <tr><td><strong>Follow-on</strong></td><td>Oferta subsequente</td></tr>
+          <tr><td><strong>FII</strong></td><td>Equity em imóveis</td></tr>
+          <tr><td><strong>BDR</strong></td><td>Ação estrangeira no Brasil</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="callout gold" style="margin-top:24px;">
+      <strong>Debênture conversível</strong> — instrumento híbrido: começa como dívida e pode se converter em ações.
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 8 — PROCESSO IB ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>O Processo de IB</h2>
+    <p style="margin-bottom:28px;">O banco de investimento funciona como <strong>intermediário especializado</strong> entre quem precisa de capital e quem tem capital.</p>
+    <div class="flow">
+      <div class="flow-step" style="border-radius:12px 0 0 12px;">
+        <div class="step-num">1</div>
+        <h3>ORIGINAÇÃO</h3>
+        <ul>
+          <li>Prospecção de clientes</li>
+          <li>Análise preliminar</li>
+          <li>Pitch e proposta</li>
+          <li>Conquista do mandato</li>
+          <li>Due diligence inicial</li>
+        </ul>
+      </div>
+      <div class="arrow">›</div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <h3>ESTRUTURAÇÃO</h3>
+        <ul>
+          <li>Escolha do veículo</li>
+          <li>Modelagem financeira</li>
+          <li>Garantias e covenants</li>
+          <li>Processo de rating</li>
+          <li>Documentação e CVM</li>
+        </ul>
+      </div>
+      <div class="arrow">›</div>
+      <div class="flow-step" style="border-radius:0 12px 12px 0;">
+        <div class="step-num">3</div>
+        <h3>DISTRIBUIÇÃO</h3>
+        <ul>
+          <li>Roadshow</li>
+          <li>Bookbuilding</li>
+          <li>Alocação</li>
+          <li>Liquidação (B3/CETIP)</li>
+          <li>Aftermarket</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px;">
+      <strong>Pergunta da originação:</strong> "Há demanda de investidores para esse papel? A que preço?"
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 9 — ORIGINAÇÃO ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>1. Originação</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>O que acontece</h3>
+        <div class="steps">
+          <div class="step-item"><div class="step-badge">①</div><p><strong>Prospecção</strong> — identificar empresas com necessidade de capital</p></div>
+          <div class="step-item"><div class="step-badge">②</div><p><strong>Análise prévia</strong> — viabilidade e tamanho estimado da operação</p></div>
+          <div class="step-item"><div class="step-badge">③</div><p><strong>Pitch</strong> — apresentar estrutura, benchmarks e indicativo de preço</p></div>
+          <div class="step-item"><div class="step-badge">④</div><p><strong>Mandato</strong> — engagement letter e definição de fee</p></div>
+          <div class="step-item"><div class="step-badge">⑤</div><p><strong>Due diligence inicial</strong> — entender o negócio e os ativos</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3>Quem faz</h3>
+        <div class="tags" style="flex-direction:column; gap:10px;">
+          <span class="tag blue" style="display:block; border-radius:8px; padding:10px 14px;">Coverage Bankers</span>
+          <span class="tag blue" style="display:block; border-radius:8px; padding:10px 14px;">DCM / ECM Originators</span>
+          <span class="tag blue" style="display:block; border-radius:8px; padding:10px 14px;">Equipe Comercial</span>
+        </div>
+        <div class="callout" style="margin-top:20px;">
+          O banco entrega: proposta de estrutura, benchmarks de mercado e indicativo de taxa.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 10 — ESTRUTURAÇÃO ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>2. Estruturação</h2>
+    <p style="margin-bottom:20px;">Onde <strong>"o produto é fabricado"</strong>. Maximiza o rating e minimiza o custo para o emissor, garantindo proteção ao investidor.</p>
+    <div class="cols">
+      <div class="col">
+        <div class="steps">
+          <div class="step-item"><div class="step-badge">①</div><p>Escolha do veículo (debênture, FIDC, CRI, CRA...)</p></div>
+          <div class="step-item"><div class="step-badge">②</div><p>Modelagem financeira — fluxo de caixa e subordinação</p></div>
+          <div class="step-item"><div class="step-badge">③</div><p>Garantias e covenants</p></div>
+          <div class="step-item"><div class="step-badge">④</div><p>Processo de rating — agência, Q&amp;A, carta</p></div>
+          <div class="step-item"><div class="step-badge">⑤</div><p>Documentação — escritura / regulamento / prospecto</p></div>
+          <div class="step-item"><div class="step-badge">⑥</div><p>Registro na CVM + precificação</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3>Participantes externos</h3>
+        <div class="tags" style="flex-direction:column; gap:8px;">
+          <span class="tag" style="display:block; border-radius:8px; padding:9px 14px;">Agência de Rating (S&amp;P, Moody's, Austin...)</span>
+          <span class="tag" style="display:block; border-radius:8px; padding:9px 14px;">Advogados (escritura e prospecto)</span>
+          <span class="tag" style="display:block; border-radius:8px; padding:9px 14px;">Auditor</span>
+          <span class="tag" style="display:block; border-radius:8px; padding:9px 14px;">CVM (registro)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 11 — DISTRIBUIÇÃO ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent"></div>
+    <h2>3. Distribuição</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Processo</h3>
+        <div class="steps">
+          <div class="step-item"><div class="step-badge">①</div><p><strong>Roadshow</strong> — apresentações para investidores institucionais</p></div>
+          <div class="step-item"><div class="step-badge">②</div><p><strong>Bookbuilding</strong> — coleta de ordens com taxa e volume</p></div>
+          <div class="step-item"><div class="step-badge">③</div><p><strong>Alocação</strong> — quem leva qual volume</p></div>
+          <div class="step-item"><div class="step-badge">④</div><p><strong>Liquidação</strong> — transferência via B3 / CETIP</p></div>
+          <div class="step-item"><div class="step-badge">⑤</div><p><strong>Aftermarket</strong> — acompanhamento no secundário</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3>Modalidades de Oferta</h3>
+        <div class="card" style="margin-bottom:14px;">
+          <h3 style="color:#90caf9;">ICVM 476 — Esforços Restritos</h3>
+          <p style="font-size:.88rem;">Até 75 investidores profissionais · Mais ágil · Sem prospecto público</p>
+        </div>
+        <div class="card">
+          <h3 style="color:#81c784;">ICVM 400 — Oferta Pública</h3>
+          <p style="font-size:.88rem;">Qualquer investidor · Prospecto completo · Mais regulada e demorada</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 12 — FIDC INTRO ════ -->
+  <div class="slide bg-fidc">
+    <div class="slide-tag">IB na Prática</div>
+    <div style="margin-bottom:20px;">
+      <div class="accent purple"></div>
+      <h1 style="font-size:2.6rem;">FIDC</h1>
+      <p class="subtitle" style="color:#ce93d8;">Fundo de Investimento em Direitos Creditórios</p>
+    </div>
+    <div class="cards" style="margin-top:20px;">
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">O que é</h3>
+        <p style="font-size:.93rem;">Fundo cuja carteira é composta majoritariamente por <strong>direitos creditórios</strong> — recebíveis que uma empresa tem a receber de seus clientes.</p>
+        <p style="font-size:.83rem; margin-top:10px; color:#9575cd;">Regulado pela <strong>Resolução CVM 175 + Anexo III</strong> (desde out/2023)</p>
+      </div>
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Para o cedente</h3>
+        <ul><li>Antecipar recebíveis = caixa agora</li><li>Desalavancar o balanço</li><li>Custo reflete o risco dos sacados, não do cedente</li></ul>
+      </div>
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Para o investidor</h3>
+        <ul><li>Rentabilidade acima do CDI</li><li>Lastro em ativos reais</li><li>Risco pulverizado (muitos sacados)</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 13 — CRESCIMENTO DO MERCADO ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Crescimento do Mercado de FIDCs</h2>
+    <div class="cols" style="align-items:flex-start;">
+      <div class="col">
+        <h3>PL FIDCs (R$ bilhões)</h3>
+        <div style="display:flex; align-items:flex-end; gap:10px; height:150px; margin-top:12px; margin-bottom:8px;">
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+            <span style="font-size:.65rem; color:#ce93d8;">308</span>
+            <div style="width:100%; height:42%; background:rgba(142,36,170,.45); border-radius:3px 3px 0 0;"></div>
+            <span style="font-size:.65rem; color:#90a4ae;">2021</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+            <span style="font-size:.65rem; color:#ce93d8;">345</span>
+            <div style="width:100%; height:47%; background:rgba(142,36,170,.55); border-radius:3px 3px 0 0;"></div>
+            <span style="font-size:.65rem; color:#90a4ae;">2022</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+            <span style="font-size:.65rem; color:#ce93d8;">472</span>
+            <div style="width:100%; height:64%; background:rgba(142,36,170,.7); border-radius:3px 3px 0 0;"></div>
+            <span style="font-size:.65rem; color:#90a4ae;">2023</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+            <span style="font-size:.65rem; color:#ce93d8;">634</span>
+            <div style="width:100%; height:86%; background:rgba(142,36,170,.85); border-radius:3px 3px 0 0;"></div>
+            <span style="font-size:.65rem; color:#90a4ae;">2024</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+            <span style="font-size:.65rem; color:#fff; font-weight:700;">736</span>
+            <div style="width:100%; height:100%; background:#8e24aa; border-radius:3px 3px 0 0;"></div>
+            <span style="font-size:.65rem; color:#ce93d8; font-weight:700;">2025</span>
+          </div>
+        </div>
+        <div class="callout purple">
+          <strong>+138%</strong> de crescimento em 4 anos · Captação de R$ 358 bi em 5 anos · FIDCs captaram positivamente em 2022 e 2023, quando a indústria de fundos como um todo foi negativa
+        </div>
+      </div>
+      <div class="col">
+        <div style="display:flex; flex-direction:column; gap:14px; margin-top:4px;">
+          <div class="card purple-card" style="text-align:center; padding:18px;">
+            <p style="font-size:2rem; font-weight:700; color:#ce93d8; line-height:1;">3.859</p>
+            <p style="font-size:.85rem; margin-top:4px;">fundos ativos em 2025</p>
+            <p style="font-size:.75rem; color:#7e57c2; margin-top:4px;">vs. 1.546 em 2021 — +150%</p>
+          </div>
+          <div class="card purple-card" style="text-align:center; padding:18px;">
+            <p style="font-size:2rem; font-weight:700; color:#ce93d8; line-height:1;">369 mil</p>
+            <p style="font-size:.85rem; margin-top:4px;">contas de investidores (2025)</p>
+            <p style="font-size:.75rem; color:#7e57c2; margin-top:4px;">vs. 28 mil em 2021 — 13× mais</p>
+          </div>
+          <div class="card purple-card" style="text-align:center; padding:18px;">
+            <p style="font-size:2rem; font-weight:700; color:#ce93d8; line-height:1;">R$ 736 bi</p>
+            <p style="font-size:.85rem; margin-top:4px;">patrimônio líquido total (2025)</p>
+            <p style="font-size:.75rem; color:#7e57c2; margin-top:4px;">maior classe de crédito privado do Brasil</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 14 — POR QUE FIDCS CRESCEM ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Por que FIDCs Crescem?</h2>
+    <div class="cards">
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Razões Intrínsecas</h3>
+        <ul style="margin-top:10px;">
+          <li><strong>Retorno:</strong> juros da ponta — spread real acima do CDI via recebíveis da economia real</li>
+          <li><strong>Proteção:</strong> spread excedente absorve perdas antes do investidor sênior</li>
+          <li><strong>Baixa volatilidade:</strong> subordinação como colchão, marcação na curva</li>
+          <li><strong>Cada fundo é um fundo</strong> — risco específico do lastro, não sistêmico</li>
+          <li><strong>Prazo longo das séries</strong> — previsibilidade de retorno</li>
+        </ul>
+      </div>
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Razões Estruturais</h3>
+        <ul style="margin-top:10px;">
+          <li><strong>Desbancarização:</strong> crédito migra dos balanços bancários para o mercado de capitais</li>
+          <li><strong>Agenda BC#:</strong> cadastro positivo, open banking, fintechs, registros — mais transparência e competição</li>
+          <li><strong>Duplicata Escritural:</strong> unicidade e rastreabilidade eliminam risco de fraude</li>
+          <li><strong>CVM 175:</strong> acesso ao varejo amplia a base de investidores</li>
+          <li><strong>Tecnologia:</strong> permite créditos cada vez mais pulverizados</li>
+        </ul>
+      </div>
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Razões Táticas</h3>
+        <ul style="margin-top:10px;">
+          <li><strong>Sem come-cotas</strong> — tributação somente no resgate</li>
+          <li><strong>IR fixo em 15%</strong> sobre o ganho — previsível e competitivo</li>
+          <li><strong>Fechamento de prêmios</strong> em debêntures, CRI e CRA intensificou busca por FIDCs</li>
+          <li><strong>Registro de duplicatas</strong> reduz fraude e aumenta confiança</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 15 — TODO CRÉDITO É FIDICÁVEL ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Desbancarização — "Todo Crédito é Fidicável"</h2>
+    <div class="cols" style="align-items:flex-start;">
+      <div class="col">
+        <p style="margin-bottom:18px; font-size:.95rem;">No Brasil, o mercado de capitais já responde por <strong style="color:#ce93d8;">51% do crédito empresarial</strong>. Nos EUA esse número é <strong style="color:#81c784;">70%</strong>. Há enorme espaço estrutural para crescimento.</p>
+        <div class="callout purple" style="margin-bottom:18px;">
+          <strong>Desbancarização</strong> é o movimento em que crédito sai dos balanços bancários e vai para o mercado de capitais — com FIDCs no protagonismo, por sua flexibilidade de lastro.
+        </div>
+        <h3 style="margin-bottom:10px;">Exemplos de lastros — passados e futuros</h3>
+        <div class="tags" style="flex-wrap:wrap; gap:8px;">
+          <span class="tag purple">Duplicatas comerciais</span>
+          <span class="tag purple">Consignado Público</span>
+          <span class="tag purple">Consignado Privado</span>
+          <span class="tag purple">Clube de Futebol</span>
+          <span class="tag purple">Painéis Solares</span>
+          <span class="tag purple">Floorplan de Montadoras</span>
+          <span class="tag purple">Mensalidades Garantidas</span>
+          <span class="tag purple">Consórcio</span>
+          <span class="tag purple">Condomínio Garantido</span>
+          <span class="tag purple">Exportação</span>
+          <span class="tag purple">Sellers Finance M&amp;A</span>
+          <span class="tag purple">BTS Imobiliário</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3 style="margin-bottom:16px;">Crédito Empresas — Brasil vs. EUA</h3>
+        <div style="display:flex; gap:40px; align-items:flex-end; height:160px; margin-bottom:16px;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; height:100%;">
+            <div style="display:flex; width:100%; height:100%; align-items:flex-end; gap:6px;">
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+                <div style="width:100%; height:49%; background:#1e88e5; border-radius:3px 3px 0 0;"></div>
+                <span style="font-size:.65rem; color:#90caf9;">Bancos<br>49%</span>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+                <span style="font-size:.75rem; color:#ce93d8; font-weight:700;">51%</span>
+                <div style="width:100%; height:51%; background:#8e24aa; border-radius:3px 3px 0 0;"></div>
+                <span style="font-size:.65rem; color:#ce93d8;">Mkt Cap</span>
+              </div>
+            </div>
+            <span style="font-size:.85rem; color:#90a4ae; font-weight:600; margin-top:6px;">BRASIL</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; height:100%;">
+            <div style="display:flex; width:100%; height:100%; align-items:flex-end; gap:6px;">
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+                <div style="width:100%; height:30%; background:#1e88e5; border-radius:3px 3px 0 0;"></div>
+                <span style="font-size:.65rem; color:#90caf9;">Bancos<br>30%</span>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end;">
+                <span style="font-size:.75rem; color:#81c784; font-weight:700;">70%</span>
+                <div style="width:100%; height:70%; background:#43a047; border-radius:3px 3px 0 0;"></div>
+                <span style="font-size:.65rem; color:#81c784;">Mkt Cap</span>
+              </div>
+            </div>
+            <span style="font-size:.85rem; color:#90a4ae; font-weight:600; margin-top:6px;">EUA</span>
+          </div>
+        </div>
+        <div class="callout green" style="font-size:.88rem;">
+          O mercado americano já migrou 70% do crédito empresarial para o mercado de capitais. O Brasil ainda tem amplo espaço — e o FIDC é o principal veículo dessa transição.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 16 (ORIG 13) — ESTRUTURA FIDC ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Estrutura do FIDC</h2>
+    <div class="cols" style="align-items:center;">
+      <div class="col" style="max-width:340px;">
+        <div class="fidc-diagram">
+          <div class="fidc-box cedente">Cedente<br><span style="font-size:.78rem; font-weight:400; color:#90caf9;">Empresa que vende os recebíveis</span></div>
+          <div class="connector"></div>
+          <div class="fidc-box">FIDC<br><span style="font-size:.78rem; font-weight:400; color:#ce93d8;">Adquire os direitos creditórios</span></div>
+          <div style="display:flex; gap:0; align-items:flex-start; margin-top:0; width:100%;">
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+              <div style="width:2px; height:24px; background:rgba(255,255,255,.2);"></div>
+              <div class="fidc-cota senior">
+                <h4>Cota Sênior</h4>
+                <p>Prioridade de pagamento<br>Menor risco / menor retorno<br><em>Investidor externo</em></p>
+              </div>
+            </div>
+            <div style="width:30px;"></div>
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+              <div style="width:2px; height:24px; background:rgba(255,255,255,.2);"></div>
+              <div class="fidc-cota sub">
+                <h4>Cota Subordinada</h4>
+                <p>Absorve as primeiras perdas<br>Maior risco / maior retorno<br><em>Geralmente o cedente</em></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3>Subordinação</h3>
+        <p style="font-size:.95rem; margin-bottom:16px;">É o percentual do PL que as cotas subordinadas devem representar.</p>
+        <div class="callout purple">
+          <strong>Exemplo:</strong> subordinação de 20% significa que os primeiros 20% de perdas da carteira são absorvidos pela cota subordinada — antes de prejudicar a sênior.
+        </div>
+        <div class="callout gold" style="margin-top:14px;">
+          <strong>Skin in the game:</strong> o cedente manter a cota subordinada alinha seus incentivos com a qualidade dos recebíveis cedidos.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE — BALANÇO DE UM FIDC ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Balanço Patrimonial — Empresa vs. FIDC</h2>
+    <p style="margin-bottom:20px; font-size:.92rem; color:#90a4ae;">Um FIDC é um balanço limpo: ativos são recebíveis, passivos são as cotas. A estrutura revela o risco com total transparência.</p>
+    <div class="cols" style="align-items:flex-start; gap:32px;">
+
+      <!-- Empresa -->
+      <div class="col">
+        <h3 style="text-align:center; margin-bottom:14px; color:#90caf9;">Empresa (Balanço Tradicional)</h3>
+        <div style="display:flex; gap:10px; height:260px;">
+          <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <div style="text-align:center; font-size:.7rem; color:#90a4ae; margin-bottom:4px; font-weight:600; letter-spacing:.05em;">ATIVO</div>
+            <div style="flex:1; background:rgba(30,136,229,.25); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#90caf9; font-weight:600; border:1px solid rgba(30,136,229,.3);">Caixa<br><span style="font-size:.65rem; color:#78909c;">10%</span></div>
+            <div style="flex:2; background:rgba(30,136,229,.18); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#90caf9; font-weight:600; border:1px solid rgba(30,136,229,.25);">Clientes<br><span style="font-size:.65rem; color:#78909c;">20%</span></div>
+            <div style="flex:2; background:rgba(30,136,229,.12); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#90caf9; font-weight:600; border:1px solid rgba(30,136,229,.2);">Estoque<br><span style="font-size:.65rem; color:#78909c;">20%</span></div>
+            <div style="flex:3; background:rgba(30,136,229,.09); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#90caf9; font-weight:600; border:1px solid rgba(30,136,229,.15);">Imóveis /<br>Equipamentos<br><span style="font-size:.65rem; color:#78909c;">50%</span></div>
+          </div>
+          <div style="display:flex; align-items:center; color:#546e7a; font-size:1.2rem;">=</div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <div style="text-align:center; font-size:.7rem; color:#90a4ae; margin-bottom:4px; font-weight:600; letter-spacing:.05em;">PASSIVO</div>
+            <div style="flex:2; background:rgba(239,83,80,.1); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#ef9a9a; font-weight:600; border:1px solid rgba(239,83,80,.2);">Fornecedores<br><span style="font-size:.65rem; color:#78909c;">15%</span></div>
+            <div style="flex:3; background:rgba(239,83,80,.08); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#ef9a9a; font-weight:600; border:1px solid rgba(239,83,80,.15);">Dívidas<br>(CP + LP)<br><span style="font-size:.65rem; color:#78909c;">30%</span></div>
+            <div style="flex:3; background:rgba(102,187,106,.12); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#a5d6a7; font-weight:600; border:1px solid rgba(102,187,106,.2);">Patrimônio<br>Acionistas<br><span style="font-size:.65rem; color:#78909c;">55%</span></div>
+          </div>
+        </div>
+        <p style="font-size:.75rem; color:#546e7a; text-align:center; margin-top:8px;">Ativo diversificado · Passivo misto</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- FIDC -->
+      <div class="col">
+        <h3 style="text-align:center; margin-bottom:14px; color:#ce93d8;">FIDC (Balanço Especializado)</h3>
+        <div style="display:flex; gap:10px; height:260px;">
+          <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <div style="text-align:center; font-size:.7rem; color:#90a4ae; margin-bottom:4px; font-weight:600; letter-spacing:.05em;">ATIVO</div>
+            <div style="flex:1; background:rgba(142,36,170,.15); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:#ce93d8; font-weight:600; border:1px solid rgba(142,36,170,.25);">Caixa<br><span style="font-size:.65rem; color:#78909c;">5%</span></div>
+            <div style="flex:9; background:rgba(142,36,170,.3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.88rem; color:#ce93d8; font-weight:700; border:1px solid rgba(142,36,170,.5); text-align:center;">Direitos<br>Creditórios<br><span style="font-size:.65rem; color:#78909c; font-weight:400;">Recebíveis — 95%</span></div>
+          </div>
+          <div style="display:flex; align-items:center; color:#546e7a; font-size:1.2rem;">=</div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <div style="text-align:center; font-size:.7rem; color:#90a4ae; margin-bottom:4px; font-weight:600; letter-spacing:.05em;">PASSIVO (COTAS)</div>
+            <div style="flex:4; background:rgba(142,36,170,.5); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.82rem; color:#fff; font-weight:700; border:1px solid rgba(142,36,170,.7); text-align:center;">Cota Sênior<br><span style="font-size:.65rem; font-weight:400; color:#e1bee7;">~60% · menor risco</span></div>
+            <div style="flex:2; background:rgba(142,36,170,.3); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.78rem; color:#ce93d8; font-weight:600; border:1px solid rgba(142,36,170,.4); text-align:center;">Mezanino<br><span style="font-size:.65rem; color:#78909c;">~20%</span></div>
+            <div style="flex:2; background:rgba(255,213,79,.15); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.78rem; color:#ffe082; font-weight:700; border:1px solid rgba(255,213,79,.3); text-align:center;">Cota JR<br><span style="font-size:.65rem; color:#78909c;">~20% · absorve 1ª perda</span></div>
+          </div>
+        </div>
+        <p style="font-size:.75rem; color:#546e7a; text-align:center; margin-top:8px;">Ativo = recebíveis · Passivo = estrutura de capital das cotas</p>
+      </div>
+
+    </div>
+    <div class="callout purple" style="margin-top:18px;">
+      <strong>A subordinação mínima</strong> é o percentual de cotas JR (+ Mz) sobre o PL. Com 20% de JR, o investidor sênior está protegido até 20% de inadimplência na carteira.
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 14 — PARTICIPANTES ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Participantes do FIDC</h2>
+    <table>
+      <tr><th>Participante</th><th>Função</th></tr>
+      <tr><td><strong>Cedente</strong></td><td>Vende os recebíveis ao fundo</td></tr>
+      <tr><td><strong>Administrador</strong></td><td>Responsável legal perante a CVM (instituição autorizada)</td></tr>
+      <tr><td><strong>Gestor</strong></td><td>Toma decisões de investimento — análise e aquisição de recebíveis</td></tr>
+      <tr><td><strong>Custodiante</strong></td><td>Guarda e valida os recebíveis (verificação de lastro)</td></tr>
+      <tr><td><strong>Agente de Cobrança</strong></td><td>Régua de cobrança dos devedores inadimplentes</td></tr>
+      <tr><td><strong>Auditor</strong></td><td>Audita as demonstrações financeiras do fundo</td></tr>
+      <tr><td><strong>Agência de Rating</strong></td><td>Avalia o risco de crédito das cotas sênior</td></tr>
+      <tr><td><strong>Distribuidor</strong></td><td>Distribui as cotas aos investidores finais</td></tr>
+    </table>
+  </div>
+
+  <!-- ════ SLIDE 15 — TIPOS DE FIDC ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Tipos de Recebíveis e FIDC</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Por originação</h3>
+        <table>
+          <tr><th>Tipo</th><th>Recebível</th></tr>
+          <tr><td><strong>Performado</strong></td><td>Produto/serviço já entregue (duplicatas, CCB)</td></tr>
+          <tr><td><strong>A performar</strong></td><td>Serviço futuro (mensalidade, assinatura)</td></tr>
+          <tr><td><strong>Pulverizado</strong></td><td>Muitos sacados pequenos (fintechs)</td></tr>
+          <tr><td><strong>Concentrado</strong></td><td>Poucos sacados grandes (fornecedores)</td></tr>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3>Recebíveis mais comuns</h3>
+        <div class="tags" style="flex-direction:column; gap:8px; margin-top:4px;">
+          <span class="tag purple" style="display:block; border-radius:8px; padding:9px 14px;">Duplicatas (NF compra e venda)</span>
+          <span class="tag purple" style="display:block; border-radius:8px; padding:9px 14px;">CCB — crédito pessoal, consignado, veículos</span>
+          <span class="tag purple" style="display:block; border-radius:8px; padding:9px 14px;">Recebíveis de cartão</span>
+          <span class="tag purple" style="display:block; border-radius:8px; padding:9px 14px;">CCI — Cédula de Crédito Imobiliário</span>
+          <span class="tag purple" style="display:block; border-radius:8px; padding:9px 14px;">Precatórios · Mensalidades · Contratos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 16 — ESTRUTURAÇÃO DO FIDC ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Estruturação de um FIDC — Passo a Passo</h2>
+    <div class="cols">
+      <div class="col">
+        <div class="steps">
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">1</div><p><strong>Originação do mandato</strong> — análise preliminar da carteira</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">2</div><p><strong>Due diligence</strong> — data tape, PDD histórica, visita operacional</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">3</div><p><strong>Modelagem</strong> — fluxo de caixa, stress test, subordinação</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">4</div><p><strong>Rating</strong> — agência, Q&amp;A, ajuste de estrutura, carta</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <div class="steps">
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">5</div><p><strong>Regulamento</strong> — política de crédito, critérios de elegibilidade, gatilhos</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">6</div><p><strong>Registro CVM</strong> — se oferta pública</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">7</div><p><strong>Distribuição</strong> — roadshow, bookbuilding, integralização</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#1a0a2e; color:#ce93d8;">8</div><p><strong>Operação contínua</strong> — cessão recorrente, relatórios, gestão de inadimplência</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 17 — ELEGIBILIDADE E GATILHOS ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Critérios de Elegibilidade e Gatilhos</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Critérios de Elegibilidade</h3>
+        <p style="font-size:.88rem; margin-bottom:12px;">Regras que determinam <strong>quais recebíveis o cedente pode ceder</strong>.</p>
+        <div class="steps">
+          <div class="step-item"><div class="step-badge" style="font-size:.7rem;">→</div><p>Prazo máximo (ex: vencer em até 180 dias)</p></div>
+          <div class="step-item"><div class="step-badge" style="font-size:.7rem;">→</div><p>Concentração máxima por sacado (ex: 5% do PL)</p></div>
+          <div class="step-item"><div class="step-badge" style="font-size:.7rem;">→</div><p>Sacados sem inadimplência ou protesto</p></div>
+          <div class="step-item"><div class="step-badge" style="font-size:.7rem;">→</div><p>NFs com CNPJ válido</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3>Gatilhos de Proteção</h3>
+        <table style="font-size:.85rem;">
+          <tr><th>Gatilho</th><th>Ação</th></tr>
+          <tr><td>Subordinação mínima</td><td>Cessão de sub ou amortização sênior</td></tr>
+          <tr><td>Índice de inadimplência</td><td>Evento de avaliação → assembleia</td></tr>
+          <tr><td>Índice de liquidez</td><td>Restrição de novas aquisições</td></tr>
+          <tr><td>Concentração máxima</td><td>Bloqueio de novos recebíveis do sacado</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 21 — MODALIDADES POR LASTRO ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Modalidades de FIDC por Lastro</h2>
+    <table style="font-size:.82rem; margin-top:8px;">
+      <tr>
+        <th style="width:20%;">Modalidade</th>
+        <th>Características</th>
+        <th>Atributos</th>
+        <th>Pontos de Atenção</th>
+      </tr>
+      <tr>
+        <td><strong style="color:#ce93d8;">Multicedentes / Multisacados</strong><br><span style="font-size:.75rem; color:#90a4ae;">Fomento mercantil digital</span></td>
+        <td>Carteiras pulverizadas · Prazo curto · Spread relevante · Consultor especializado</td>
+        <td>Alta probabilidade de recebimento · Facilidade de ajuste de risco · Subordinação elevada</td>
+        <td>Qualidade do consultor · Conhecimento da carteira · Alinhamento ativo-passivo</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#90caf9;">Consignado Público</strong><br><span style="font-size:.75rem; color:#90a4ae;">INSS · SIAPE · Forças Armadas · Estados</span></td>
+        <td>Contratos longos · Margem até 45% · Desconto direto em folha · Operações cedidas com ágio</td>
+        <td>Risco de ente público (CAPAG) · Inadimplência controlada · Liquidez no secundário</td>
+        <td>Risco de pré-pagamento · Hedge de duration necessário · Insegurança jurídica / política</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#81c784;">Consignado Privado</strong><br><span style="font-size:.75rem; color:#90a4ae;">Empresas privadas como pagadoras</span></td>
+        <td>Margem até 30% · Vinculado ao eSocial · Dívida "segue o emprego" · Múltiplas classes de cotas</td>
+        <td>Volume disponível · Remunerações atraentes · Inadimplência tende a ser controlada</td>
+        <td>Operacional ainda imaturo · Performance incerta · Insegurança jurídica do produto</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#ffe082;">Outros / Inovadores</strong><br><span style="font-size:.75rem; color:#90a4ae;">Consórcio · Futebol · Condomínio · Utilities</span></td>
+        <td>Capacity "ilimitado" · Retorno potencial maior · Descorrelação com ciclo econômico</td>
+        <td>Menor competição de grandes players · Inteligência + estrutura geram prêmio relevante</td>
+        <td>Operacionais pouco testados · Track record de originadores · "Separar o joio do trigo"</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ════ SLIDE — RISCO SACADO FLUXO ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Risco Sacado — Como Funciona</h2>
+    <p style="margin-bottom:22px; font-size:.95rem;">A empresa âncora (sacado) é o risco do fundo — não o fornecedor. Isso permite taxas menores para o fornecedor e prazo maior para a empresa.</p>
+
+    <!-- Flow diagram -->
+    <div style="display:grid; grid-template-columns:1fr auto 1fr; grid-template-rows:auto auto auto; gap:10px 0; align-items:center; margin-bottom:22px;">
+
+      <!-- Empresa -->
+      <div style="background:rgba(30,136,229,.1); border:1px solid rgba(30,136,229,.3); border-radius:12px; padding:14px 18px; text-align:center;">
+        <p style="font-size:.8rem; color:#90caf9; font-weight:700; margin-bottom:4px;">EMPRESA (Sacado)</p>
+        <p style="font-size:.75rem; color:#78909c;">Precisa comprar de fornecedor<br>mas quer prazo de 90 dias</p>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:0 16px;">
+        <div style="width:2px; height:20px; background:rgba(255,255,255,.15);"></div>
+      </div>
+      <!-- Fornecedor -->
+      <div style="background:rgba(67,160,71,.1); border:1px solid rgba(67,160,71,.3); border-radius:12px; padding:14px 18px; text-align:center;">
+        <p style="font-size:.8rem; color:#81c784; font-weight:700; margin-bottom:4px;">FORNECEDOR (Cedente)</p>
+        <p style="font-size:.75rem; color:#78909c;">Entrega bens/serviços<br>mas precisa de caixa imediato</p>
+      </div>
+
+      <!-- Setas centrais -->
+      <div style="display:flex; align-items:center; justify-content:flex-end; padding-right:8px;">
+        <div style="text-align:right;">
+          <p style="font-size:.72rem; color:#90caf9; margin-bottom:2px;">① Negocia prazo de 90 dias</p>
+          <div style="height:1px; background:rgba(30,136,229,.4);"></div>
+          <p style="font-size:.72rem; color:#81c784; margin-top:2px;">④ Paga ao FIDC em 90 dias</p>
+        </div>
+        <span style="color:#546e7a; font-size:1.4rem; margin-left:6px;">→</span>
+      </div>
+
+      <!-- FIDC central -->
+      <div style="background:linear-gradient(135deg,rgba(142,36,170,.4),rgba(142,36,170,.2)); border:2px solid rgba(142,36,170,.7); border-radius:16px; padding:18px; text-align:center;">
+        <p style="font-size:1rem; font-weight:700; color:#ce93d8;">FIDC</p>
+        <p style="font-size:.72rem; color:#b39ddb; margin-top:4px;">Compra o recebível do fornecedor<br>com taxa sobre o risco da empresa âncora</p>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:flex-start; padding-left:8px;">
+        <span style="color:#546e7a; font-size:1.4rem; margin-right:6px;">←</span>
+        <div style="text-align:left;">
+          <p style="font-size:.72rem; color:#81c784; margin-bottom:2px;">② Cede recebíveis ao FIDC</p>
+          <div style="height:1px; background:rgba(67,160,71,.4);"></div>
+          <p style="font-size:.72rem; color:#81c784; margin-top:2px;">③ Recebe à vista (desconto)</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cards" style="gap:12px;">
+      <div class="card" style="flex:1; border-color:#90caf9; background:rgba(30,136,229,.06); padding:12px 16px;">
+        <h3 style="color:#90caf9; font-size:.85rem;">Empresa ganha</h3>
+        <p style="font-size:.82rem; margin-top:6px;">Prazo de 90+ dias · Taxa baseada no seu próprio risco (investment grade) · Não "ocupa" limite de crédito bancário</p>
+      </div>
+      <div class="card" style="flex:1; border-color:#81c784; background:rgba(67,160,71,.06); padding:12px 16px;">
+        <h3 style="color:#81c784; font-size:.85rem;">Fornecedor ganha</h3>
+        <p style="font-size:.82rem; margin-top:6px;">Caixa à vista · Taxa melhor do que o próprio crédito bancário · Risco da empresa âncora, não dele mesmo</p>
+      </div>
+      <div class="card" style="flex:1; border-color:#ce93d8; background:rgba(142,36,170,.06); padding:12px 16px;">
+        <h3 style="color:#ce93d8; font-size:.85rem;">FIDC ganha</h3>
+        <p style="font-size:.82rem; margin-top:6px;">Risco do sacado (empresa âncora) com spread sobre o CDI · Carteira com vencimentos certos e sacado de qualidade</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE — RISCO SACADO DRE ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Risco Sacado — Exemplo Completo</h2>
+    <div style="display:grid; grid-template-columns:1.5fr 1px 1fr; gap:0 20px; align-items:start; margin-top:10px;">
+
+      <!-- DRE completo -->
+      <div>
+        <h3 style="margin-bottom:10px; font-size:.85rem; color:#90a4ae;">Simulação DRE — Empresa com FIDC de R$ 100 MM</h3>
+        <table style="font-size:.8rem; width:100%;">
+          <tr>
+            <th style="text-align:left;">Linha</th>
+            <th style="text-align:right; min-width:108px;">Sem Risco Sacado</th>
+            <th style="text-align:right; min-width:108px; color:#ce93d8;">Com Risco Sacado</th>
+            <th style="text-align:right; min-width:68px; color:#81c784;">Delta</th>
+          </tr>
+          <tr>
+            <td style="color:#90a4ae;">EBITDA</td>
+            <td style="text-align:right;">100.000.000</td>
+            <td style="text-align:right; color:#b39ddb;">100.000.000</td>
+            <td style="text-align:right; color:#546e7a;">—</td>
+          </tr>
+          <tr style="background:rgba(142,36,170,.1);">
+            <td><strong>Resultado Financeiro</strong></td>
+            <td style="text-align:right; font-weight:600;">4.290.750</td>
+            <td style="text-align:right; color:#ce93d8; font-weight:600;">10.957.622</td>
+            <td style="text-align:right; color:#81c784; font-weight:600;">+6.666.872</td>
+          </tr>
+          <tr style="background:rgba(0,0,0,.12);">
+            <td style="padding-left:18px; font-size:.73rem; color:#78909c;">↳ Receita Financeira (bruta)</td>
+            <td style="text-align:right; font-size:.73rem; color:#546e7a;">4.290.750</td>
+            <td style="text-align:right; font-size:.73rem; color:#7e57c2;">10.957.622</td>
+            <td style="text-align:right; font-size:.73rem; color:#546e7a;"></td>
+          </tr>
+          <tr style="background:rgba(0,0,0,.12);">
+            <td style="padding-left:18px; font-size:.73rem; color:#78909c;">↳ Despesa Financeira</td>
+            <td style="text-align:right; font-size:.73rem; color:#546e7a;">0</td>
+            <td style="text-align:right; font-size:.73rem; color:#7e57c2;">0</td>
+            <td style="text-align:right; font-size:.73rem; color:#546e7a;"></td>
+          </tr>
+          <tr style="background:rgba(0,0,0,.12);">
+            <td style="padding-left:18px; font-size:.73rem; color:#78909c;">↳ PIS/COFINS s/ Rec. Fin.</td>
+            <td style="text-align:right; font-size:.73rem; color:#ef9a9a;">-4,65%</td>
+            <td style="text-align:right; font-size:.73rem; color:#ef9a9a;">-4,65%</td>
+            <td style="text-align:right; font-size:.73rem; color:#546e7a;">—</td>
+          </tr>
+          <tr>
+            <td><strong>EBT</strong></td>
+            <td style="text-align:right; font-weight:600;">104.290.750</td>
+            <td style="text-align:right; color:#ce93d8; font-weight:600;">110.957.622</td>
+            <td style="text-align:right; color:#81c784;">+6.666.872</td>
+          </tr>
+          <tr>
+            <td style="color:#90a4ae; font-size:.78rem;">IR / CSLL (%)</td>
+            <td style="text-align:right; color:#ef9a9a; font-size:.78rem;">-34,00%</td>
+            <td style="text-align:right; color:#ef9a9a; font-size:.78rem;">-34,00%</td>
+            <td style="text-align:right; color:#546e7a; font-size:.78rem;">—</td>
+          </tr>
+          <tr>
+            <td style="color:#90a4ae; font-size:.78rem;">IR / CSLL (R$)</td>
+            <td style="text-align:right; color:#ef9a9a; font-size:.78rem;">-35.458.855</td>
+            <td style="text-align:right; color:#ef9a9a; font-size:.78rem;">-37.725.591</td>
+            <td style="text-align:right; color:#ef9a9a; font-size:.78rem;">-2.266.736</td>
+          </tr>
+          <tr style="background:rgba(142,36,170,.18); font-weight:700;">
+            <td style="font-size:.95rem;">Lucro Líquido</td>
+            <td style="text-align:right; font-size:.95rem;">68.831.895</td>
+            <td style="text-align:right; color:#ce93d8; font-size:.95rem;">73.232.031</td>
+            <td style="text-align:right; color:#81c784; font-size:.95rem;">+4.400.136</td>
+          </tr>
+          <tr style="border-top:2px solid rgba(255,255,255,.08);">
+            <td style="color:#78909c; font-size:.75rem; padding-top:6px;">Caixa disponível</td>
+            <td style="text-align:right; font-size:.75rem; color:#78909c; padding-top:6px;">30.000.000</td>
+            <td style="text-align:right; font-size:.75rem; color:#7e57c2; padding-top:6px;">10.000.000</td>
+            <td style="text-align:right; font-size:.75rem; color:#ef9a9a; padding-top:6px;">-20.000.000</td>
+          </tr>
+          <tr>
+            <td style="color:#78909c; font-size:.75rem;">Rend. Caixa (% a.a.)</td>
+            <td style="text-align:right; font-size:.75rem; color:#78909c;">15%</td>
+            <td style="text-align:right; font-size:.75rem; color:#7e57c2;">15%</td>
+            <td style="text-align:right; font-size:.75rem; color:#546e7a;">—</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- divider -->
+      <div style="background:rgba(255,255,255,.08); height:100%; min-height:340px;"></div>
+
+      <!-- Premissas + JR -->
+      <div>
+        <h3 style="margin-bottom:8px; font-size:.85rem; color:#90a4ae;">Premissas do FIDC</h3>
+        <div style="background:rgba(142,36,170,.1); border-radius:10px; padding:11px 14px; font-size:.76rem; margin-bottom:14px; color:#b39ddb; line-height:1.7;">
+          <div>Estrutura: <strong style="color:#ce93d8;">70% SR (CDI+4%) / 10% MZ (CDI+6%) / 20% JR</strong></div>
+          <div>Perda estimada: <strong style="color:#ce93d8;">0%</strong></div>
+          <div>Prazo do ativo: <strong style="color:#ce93d8;">60 dias</strong></div>
+          <div>Taxa do ativo: <strong style="color:#ce93d8;">2,5% a.m. = CDI + 17,05% a.a.</strong></div>
+          <div>Custo de originação: <strong style="color:#ce93d8;">0,8%</strong></div>
+          <div>PL do FIDC: <strong style="color:#ce93d8;">R$ 100 MM</strong></div>
+          <div>Despesas do fundo: <strong style="color:#ce93d8;">~1,45% a.a.</strong></div>
+        </div>
+
+        <h3 style="margin-bottom:8px; font-size:.85rem; color:#ffe082;">Retorno — Cotista JR (20% do PL)</h3>
+        <div style="background:rgba(255,213,79,.08); border:1px solid rgba(255,213,79,.3); border-radius:10px; padding:13px 14px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:7px;">
+            <span style="font-size:.78rem; color:#90a4ae;">Aporte na Cota JR</span>
+            <span style="font-size:.9rem; font-weight:700; color:#ffe082;">R$ 20.000.000</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:7px;">
+            <span style="font-size:.78rem; color:#90a4ae;">Resultado Cota JR</span>
+            <span style="font-size:.9rem; font-weight:700; color:#ffe082;">49,96% a.a.</span>
+          </div>
+          <div style="height:1px; background:rgba(255,213,79,.2); margin-bottom:7px;"></div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-size:.78rem; color:#90a4ae;">Rentabilidade Anual</span>
+            <span style="font-size:.9rem; font-weight:700; color:#81c784;">R$ 9.992.000</span>
+          </div>
+          <p style="font-size:.7rem; color:#78909c; margin-top:6px;">Comparação: R$20MM em caixa (15%) = R$3.000.000<br>→ ganho adicional de R$6.992.000 na JR</p>
+        </div>
+
+        <div class="callout purple" style="font-size:.8rem;">
+          <strong>O racional:</strong> R$20MM saem do caixa (15% a.a.) e entram na Cota JR (~50% a.a.). O lucro líquido cresce R$4,4 MM mesmo pagando mais IR, porque o resultado financeiro salta R$6,7 MM.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 22 — A CONTA FECHA? ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Taxa Mínima de Cessão — "A Conta Fecha?"</h2>
+    <p style="margin-bottom:20px; font-size:.95rem;">A <strong>taxa de cessão</strong> (juros cobrados dos devedores) deve cobrir todos os custos e remunerar todos os cotistas. Se não cobrir, o FIDC não é viável.</p>
+    <div class="cols" style="align-items:flex-start;">
+      <div class="col" style="max-width:340px;">
+        <h3 style="margin-bottom:12px;">Exemplo: carteira de consignado a 30% a.a.</h3>
+        <div style="border:1px solid rgba(142,36,170,.4); border-radius:10px; overflow:hidden;">
+          <div style="background:#8e24aa; padding:11px 16px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; color:#fff; font-size:.9rem;">Cotistas Sênior</span>
+            <span style="font-size:1.25rem; font-weight:700; color:#fff;">15% a.a.</span>
+          </div>
+          <div style="background:rgba(142,36,170,.45); padding:11px 16px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; color:#fff; font-size:.9rem;">Cotistas Subordinados</span>
+            <span style="font-size:1.25rem; font-weight:700; color:#fff;">12% a.a.</span>
+          </div>
+          <div style="background:rgba(255,255,255,.05); padding:11px 16px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#b0bec5; font-size:.9rem;">Custos do Fundo</span>
+            <span style="color:#b0bec5; font-weight:600;">1,5%</span>
+          </div>
+          <div style="background:rgba(255,255,255,.03); padding:11px 16px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,.08);">
+            <span style="color:#b0bec5; font-size:.9rem;">Inadimplência Estimada</span>
+            <span style="color:#b0bec5; font-weight:600;">1,5%</span>
+          </div>
+          <div style="background:rgba(142,36,170,.2); padding:13px 16px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(142,36,170,.5);">
+            <span style="font-weight:700; color:#ce93d8; font-size:.9rem;">TAXA MÍNIMA DE CESSÃO</span>
+            <span style="font-size:1.5rem; font-weight:700; color:#ce93d8;">30%</span>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3 style="margin-bottom:12px;">As 5 variáveis que determinam a conta</h3>
+        <div class="steps">
+          <div class="step-item"><div class="step-badge">1</div><p><strong>Taxa de cessão</strong> — o "preço" pelo qual os recebíveis são comprados do cedente</p></div>
+          <div class="step-item"><div class="step-badge">2</div><p><strong>Custos do fundo</strong> — administração, gestão, custódia, auditoria, rating</p></div>
+          <div class="step-item"><div class="step-badge">3</div><p><strong>Alvo de remuneração do passivo</strong> — quanto cada classe de cota precisa render</p></div>
+          <div class="step-item"><div class="step-badge">4</div><p><strong>Inadimplência esperada</strong> — baseada em histórico real da carteira (série de vintage)</p></div>
+          <div class="step-item"><div class="step-badge">5</div><p><strong>Ociosidade de caixa</strong> — dias em que o fundo está sem alocar (cash drag)</p></div>
+        </div>
+        <div class="callout gold" style="margin-top:16px;">
+          <strong>Lição do mercado:</strong> nos FIDCs de consignado pós-pandemia, taxas que pareciam adequadas revelaram inadimplência muito acima do esperado — a conta não fechou. Histórico de estresse importa.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 23 — FRAUDE ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Fraude — A Perda Irrecuperável</h2>
+    <div class="cols" style="align-items:flex-start; margin-top:8px;">
+      <div class="col">
+        <div class="callout purple" style="margin-bottom:20px; font-size:1rem;">
+          <strong>"Fraude é feita para dar certo."</strong><br>É o único mecanismo que deteriora uma carteira mais rápido do que as ferramentas de proteção do FIDC conseguem reagir.
+        </div>
+        <div class="steps">
+          <div class="step-item"><div class="step-badge" style="background:#4a0000; color:#ef9a9a; font-size:.8rem;">!</div><p>Pode vir do <strong>originador</strong> — duplicatas fictícias, recebíveis cedidos múltiplas vezes ao mesmo fundo</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#4a0000; color:#ef9a9a; font-size:.8rem;">!</div><p>Pode vir dos <strong>cedentes / sacados</strong> — notas fiscais falsas, empresas-fantasma, operações cruzadas</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#4a0000; color:#ef9a9a; font-size:.8rem;">!</div><p>Diferente da inadimplência: <strong>não há reversão</strong> — o ativo simplesmente não existia</p></div>
+          <div class="step-item"><div class="step-badge" style="background:#4a0000; color:#ef9a9a; font-size:.8rem;">!</div><p>Gatilhos e subordinação são acionados <strong>após</strong> a fraude — velocidade impede proteção total</p></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3 style="color:#ef9a9a; margin-bottom:14px;">Como mitigar</h3>
+        <div class="card" style="border-color:#ef5350; background:rgba(239,83,80,.05); margin-bottom:10px;">
+          <p style="font-size:.88rem;"><strong style="color:#ef9a9a;">Verificação rigorosa de lastro</strong> — custodiante valida cada recebível contra NF-e e registros oficiais</p>
+        </div>
+        <div class="card" style="border-color:#ef5350; background:rgba(239,83,80,.05); margin-bottom:10px;">
+          <p style="font-size:.88rem;"><strong style="color:#ef9a9a;">Monitoramento sistematizado</strong> — cruzamento de pagamentos com histórico de sacados e bureaus em tempo real</p>
+        </div>
+        <div class="card" style="border-color:#ef5350; background:rgba(239,83,80,.05); margin-bottom:10px;">
+          <p style="font-size:.88rem;"><strong style="color:#ef9a9a;">Duplicata escritural</strong> — unicidade garantida pelo registrador elimina o risco de dupla cessão</p>
+        </div>
+        <div class="callout" style="border-color:#ef5350; background:rgba(239,83,80,.06); color:#ef9a9a; margin-top:4px;">
+          <strong>Caso Silverado (2009):</strong> FIDC com R$ 1,5 bi em recebíveis fictícios — o maior caso de fraude em FIDC do Brasil. Levou a revisão profunda da regulação de custódia.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 24 — ONDE ESTÃO OS RISCOS ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Onde Estão os Riscos</h2>
+    <div style="display:flex; flex-wrap:wrap; gap:14px; margin-top:12px;">
+      <div class="card" style="flex:1; min-width:200px; border-color:#f9a825; background:rgba(249,168,37,.06);">
+        <h3 style="color:#ffe082;">Ilusão da Baixa Volatilidade</h3>
+        <p style="font-size:.85rem; margin-top:8px;">Cotas sênior apresentam volatilidade próxima de zero — mas isso não reflete o risco real. A marcação na curva "esconde" deterioração. Subordinação alta não é sinônimo de segurança absoluta.</p>
+      </div>
+      <div class="card" style="flex:1; min-width:200px; border-color:#ef5350; background:rgba(239,83,80,.06);">
+        <h3 style="color:#ef9a9a;">Iliquidez</h3>
+        <p style="font-size:.85rem; margin-top:8px;">A maioria dos FIDCs é fechada — sem resgate antecipado. Mercado secundário restrito. Quem precisar sair antes do vencimento paga prêmio importante. Estrutura "carry to maturity".</p>
+      </div>
+      <div class="card" style="flex:1; min-width:200px; border-color:#ce93d8; background:rgba(142,36,170,.08);">
+        <h3 style="color:#ce93d8;">Novos Lastros e Entrantes</h3>
+        <p style="font-size:.85rem; margin-top:8px;">Oportunidade e risco caminham juntos. Lastros inovadores exigem conhecimento profundo. O que parece óbvio pode esconder riscos; o incomum pode estar bem estruturado.</p>
+      </div>
+      <div class="card" style="flex:1; min-width:200px; border-color:#90caf9; background:rgba(30,136,229,.06);">
+        <h3 style="color:#90caf9;">Risco de Crédito</h3>
+        <p style="font-size:.85rem; margin-top:8px;">Os 3 C's: <strong>Caráter</strong>, <strong>Capacidade</strong> e <strong>Capital</strong>. Métricas de período calmo não funcionam em stress. Gestão ativa é obrigatória.</p>
+      </div>
+      <div class="card" style="flex:1; min-width:200px; border-color:#81c784; background:rgba(67,160,71,.06);">
+        <h3 style="color:#81c784;">Complexidade dos KPIs</h3>
+        <p style="font-size:.85rem; margin-top:8px;">Cada FIDC tem métricas específicas ao seu lastro — não existe indicador universal. O gestor precisa entender as peculiaridades, e o investidor precisa cobrar essa profundidade.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 25 (ORIG 18) — COMPARATIVO ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>FIDC vs. Alternativas</h2>
+    <table>
+      <tr>
+        <th>Critério</th>
+        <th>Desconto Bancário</th>
+        <th>CRI / CRA</th>
+        <th>FIDC</th>
+      </tr>
+      <tr><td>Setor</td><td>Qualquer</td><td>Imob. / Agro</td><td style="color:#ce93d8;"><strong>Qualquer</strong></td></tr>
+      <tr><td>Risco no balanço</td><td>Banco</td><td>Investidor</td><td>Investidor</td></tr>
+      <tr><td>Custo típico</td><td>CDI + 4–8%</td><td>CDI + 1–3%</td><td>CDI + 1,5–5%</td></tr>
+      <tr><td>Prazo</td><td>Curto</td><td>Longo</td><td>Médio / Longo</td></tr>
+      <tr><td>Complexidade</td><td>Simples</td><td>Alta</td><td>Alta</td></tr>
+      <tr><td>Volume mínimo</td><td>Pequeno</td><td>R$ 50M+</td><td>R$ 20M+</td></tr>
+    </table>
+    <div class="callout purple" style="margin-top:20px;">
+      O FIDC é o único instrumento que serve qualquer setor e pode ser estruturado para carteiras menores que CRI/CRA.
+    </div>
+  </div>
+
+  <!-- ════ SLIDE — EFICIÊNCIA TRIBUTÁRIA ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Eficiência Tributária via FIDC</h2>
+    <p style="margin-bottom:20px; font-size:.92rem;">O FIDC cria um <strong>triângulo de eficiência fiscal</strong>: a empresa deduz despesa financeira, o fundo opera isento, e o acionista captura o retorno com tributação reduzida.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+
+      <!-- Empresa -->
+      <div style="background:rgba(30,136,229,.08); border:1px solid rgba(30,136,229,.3); border-radius:14px; padding:20px;">
+        <div style="text-align:center; margin-bottom:14px;">
+          <div style="display:inline-block; width:44px; height:44px; border-radius:50%; background:rgba(30,136,229,.25); border:2px solid rgba(30,136,229,.5); line-height:44px; font-size:1.2rem; margin-bottom:8px;">🏢</div>
+          <h3 style="color:#90caf9;">Empresa</h3>
+        </div>
+        <ul style="font-size:.82rem; color:#b0bec5;">
+          <li style="margin-bottom:8px;">Emite <strong style="color:#90caf9;">debênture ou NC</strong> privada para o FIDC</li>
+          <li style="margin-bottom:8px;"><strong style="color:#90caf9;">Despesa financeira dedutível</strong> reduz a base de IRPJ + CSLL (34%)</li>
+          <li style="margin-bottom:8px;">Estrutura de capital otimizada — menos imposto, mesmo EBITDA</li>
+        </ul>
+        <div style="margin-top:12px; padding:8px 12px; background:rgba(30,136,229,.12); border-radius:8px; text-align:center;">
+          <p style="font-size:.78rem; color:#90caf9;"><strong>Economia fiscal real</strong><br>em cada real de despesa financeira</p>
+        </div>
+      </div>
+
+      <!-- FIDC -->
+      <div style="background:rgba(142,36,170,.12); border:2px solid rgba(142,36,170,.5); border-radius:14px; padding:20px;">
+        <div style="text-align:center; margin-bottom:14px;">
+          <div style="display:inline-block; width:44px; height:44px; border-radius:50%; background:rgba(142,36,170,.3); border:2px solid rgba(142,36,170,.6); line-height:44px; font-size:1.2rem; margin-bottom:8px;">⚡</div>
+          <h3 style="color:#ce93d8;">FIDC</h3>
+        </div>
+        <ul style="font-size:.82rem; color:#b0bec5;">
+          <li style="margin-bottom:8px;"><strong style="color:#ce93d8;">Isento de IR, IOF, PIS, Cofins e CSLL</strong> nas operações do fundo</li>
+          <li style="margin-bottom:8px;">Tributação somente no resgate / distribuição ao cotista</li>
+          <li style="margin-bottom:8px;">Opera com custo tributário próximo de zero dentro do veículo</li>
+        </ul>
+        <div style="margin-top:12px; padding:8px 12px; background:rgba(142,36,170,.2); border-radius:8px; text-align:center;">
+          <p style="font-size:.78rem; color:#ce93d8;"><strong>Sem come-cotas</strong><br>sem tributação no meio do caminho</p>
+        </div>
+      </div>
+
+      <!-- Acionistas -->
+      <div style="background:rgba(255,213,79,.06); border:1px solid rgba(255,213,79,.3); border-radius:14px; padding:20px;">
+        <div style="text-align:center; margin-bottom:14px;">
+          <div style="display:inline-block; width:44px; height:44px; border-radius:50%; background:rgba(255,213,79,.15); border:2px solid rgba(255,213,79,.4); line-height:44px; font-size:1.2rem; margin-bottom:8px;">👤</div>
+          <h3 style="color:#ffe082;">Acionistas (PF)</h3>
+        </div>
+        <ul style="font-size:.82rem; color:#b0bec5;">
+          <li style="margin-bottom:8px;">Investem na <strong style="color:#ffe082;">cota JR</strong> (pessoa física)</li>
+          <li style="margin-bottom:8px;"><strong style="color:#ffe082;">IR de 17,5%</strong> sobre o ganho (vs até 27,5% na renda comum)</li>
+          <li style="margin-bottom:8px;">Captura o resultado do funding com carga tributária reduzida</li>
+        </ul>
+        <div style="margin-top:12px; padding:8px 12px; background:rgba(255,213,79,.1); border-radius:8px; text-align:center;">
+          <p style="font-size:.78rem; color:#ffe082;"><strong>Alavancagem fiscal</strong><br>retorno do negócio com tributação de fundo</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout gold">
+      Ao investir na cota JR do FIDC, o acionista aumenta a despesa financeira da empresa (reduz lucro tributável), e captura o retorno com tributação mais eficiente do que recebê-lo como dividendo ou ganho de capital direto.
+    </div>
+  </div>
+
+  <!-- ════ SLIDE — OTIMIZAÇÃO DE CAPITAL ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Otimizando a Estrutura de Capital via FIDC</h2>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:12px;">
+
+      <!-- Alternativa 1 — Via Balanço -->
+      <div style="border:1px solid rgba(239,83,80,.35); border-radius:14px; padding:16px 18px; background:rgba(239,83,80,.04);">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <div style="width:28px; height:28px; border-radius:50%; background:rgba(239,83,80,.2); border:1px solid rgba(239,83,80,.5); display:flex; align-items:center; justify-content:center; font-weight:700; color:#ef9a9a; flex-shrink:0;">1</div>
+          <h3 style="color:#ef9a9a;">Captação via Balanço</h3>
+        </div>
+        <div style="background:rgba(239,83,80,.1); border-radius:10px; padding:14px 16px; margin-bottom:14px; text-align:center;">
+          <p style="font-size:.75rem; color:#90a4ae; margin-bottom:4px;">Dívida corporativa tradicional</p>
+          <p style="font-size:2rem; font-weight:700; color:#ef9a9a;">CDI + 7,0%</p>
+          <p style="font-size:.72rem; color:#78909c; margin-top:2px;">custo de alavancagem a.a.</p>
+        </div>
+        <ul style="font-size:.82rem; color:#b0bec5; line-height:1.8;">
+          <li>Consome balanço e aumenta alavancagem</li>
+          <li>Impacta negativamente o WACC corporativo</li>
+          <li>Risco percebido recai sobre a empresa</li>
+          <li>Limites bancários comprometidos</li>
+        </ul>
+      </div>
+
+      <!-- Alternativa 2 — Via FIDC -->
+      <div style="border:2px solid rgba(142,36,170,.5); border-radius:14px; padding:16px 18px; background:rgba(142,36,170,.06);">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <div style="width:28px; height:28px; border-radius:50%; background:rgba(142,36,170,.3); border:1px solid rgba(142,36,170,.6); display:flex; align-items:center; justify-content:center; font-weight:700; color:#ce93d8; flex-shrink:0;">2</div>
+          <h3 style="color:#ce93d8;">Estrutura via FIDC</h3>
+        </div>
+
+        <!-- Cálculo empilhado -->
+        <table style="font-size:.8rem; width:100%; margin-bottom:12px; border-radius:8px; overflow:hidden;">
+          <tr style="background:rgba(255,255,255,.05);">
+            <th style="text-align:left; padding:7px 10px; color:#90a4ae; font-weight:500;">Classe</th>
+            <th style="text-align:center; color:#90a4ae; font-weight:500;">% PL</th>
+            <th style="text-align:center; color:#90a4ae; font-weight:500;">Taxa</th>
+            <th style="text-align:right; color:#90a4ae; font-weight:500;">Spread Pond.</th>
+          </tr>
+          <tr style="background:rgba(142,36,170,.35);">
+            <td style="padding:7px 10px; color:#fff; font-weight:600;">Sênior</td>
+            <td style="text-align:center; color:#e1bee7;">50%</td>
+            <td style="text-align:center; color:#e1bee7;">CDI + 4,0%</td>
+            <td style="text-align:right; color:#fff; font-weight:600;">+ 2,0%</td>
+          </tr>
+          <tr style="background:rgba(142,36,170,.22);">
+            <td style="padding:7px 10px; color:#ce93d8; font-weight:600;">Mezanino</td>
+            <td style="text-align:center; color:#b39ddb;">30%</td>
+            <td style="text-align:center; color:#b39ddb;">CDI + 6,0%</td>
+            <td style="text-align:right; color:#ce93d8; font-weight:600;">+ 1,8%</td>
+          </tr>
+          <tr style="background:rgba(255,213,79,.08);">
+            <td style="padding:7px 10px; color:#ffe082; font-weight:600;">Sub. Júnior</td>
+            <td style="text-align:center; color:#fff8e1;">20%</td>
+            <td style="text-align:center; color:#fff8e1;">target CDI + 15%</td>
+            <td style="text-align:right; color:#ffe082; font-style:italic; font-size:.72rem;">residual</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,.04);">
+            <td style="padding:7px 10px; color:#90a4ae; font-size:.75rem;">Despesas FIDC</td>
+            <td style="text-align:center; color:#78909c; font-size:.75rem;">—</td>
+            <td style="text-align:center; color:#78909c; font-size:.75rem;">~1,2% a.a. do PL</td>
+            <td style="text-align:right; color:#90a4ae; font-size:.75rem;">embutido na JR</td>
+          </tr>
+          <tr style="background:rgba(67,160,71,.12); border-top:2px solid rgba(67,160,71,.4);">
+            <td colspan="3" style="padding:9px 10px; font-weight:700; color:#81c784;">Custo de Alavancagem (SR + MZ)</td>
+            <td style="text-align:right; font-size:1.15rem; font-weight:700; color:#81c784; padding-right:10px;">CDI + 3,8%</td>
+          </tr>
+        </table>
+
+        <ul style="font-size:.82rem; color:#b0bec5; line-height:1.8;">
+          <li>Não consome balanço — risco é da carteira de recebíveis</li>
+          <li>Preserva rating corporativo e limites bancários</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Conclusão / Cascata -->
+    <div style="display:flex; align-items:center; gap:14px; margin-top:14px; padding:12px 18px; background:rgba(67,160,71,.07); border-radius:12px; border:1px solid rgba(67,160,71,.3);">
+      <div style="flex-shrink:0; text-align:center; min-width:90px;">
+        <p style="font-size:.7rem; color:#90a4ae;">Economia</p>
+        <p style="font-size:1.8rem; font-weight:700; color:#81c784; line-height:1;">3,2%</p>
+        <p style="font-size:.68rem; color:#81c784;">a.a. · 46% menor</p>
+      </div>
+      <div style="width:1px; height:50px; background:rgba(67,160,71,.3); flex-shrink:0;"></div>
+      <div style="display:flex; align-items:center; gap:0; flex:1; flex-wrap:wrap;">
+        <div style="text-align:center; padding:0 12px; border-right:1px solid rgba(255,255,255,.1);">
+          <p style="font-size:.7rem; color:#90a4ae; margin-bottom:2px;">Custo capital</p>
+          <p style="font-size:.85rem; font-weight:700; color:#81c784;">↓ Menor</p>
+        </div>
+        <div style="font-size:1.2rem; color:#546e7a; padding:0 4px;">→</div>
+        <div style="text-align:center; padding:0 12px; border-right:1px solid rgba(255,255,255,.1);">
+          <p style="font-size:.7rem; color:#90a4ae; margin-bottom:2px;">WACC</p>
+          <p style="font-size:.85rem; font-weight:700; color:#81c784;">↓ Menor</p>
+        </div>
+        <div style="font-size:1.2rem; color:#546e7a; padding:0 4px;">→</div>
+        <div style="text-align:center; padding:0 12px; border-right:1px solid rgba(255,255,255,.1);">
+          <p style="font-size:.7rem; color:#90a4ae; margin-bottom:2px;">Valuation (DCF)</p>
+          <p style="font-size:.85rem; font-weight:700; color:#81c784;">↑ Maior</p>
+        </div>
+        <div style="font-size:1.2rem; color:#546e7a; padding:0 4px;">→</div>
+        <div style="text-align:center; padding:0 12px;">
+          <p style="font-size:.7rem; color:#90a4ae; margin-bottom:2px;">Fee M&amp;A</p>
+          <p style="font-size:.85rem; font-weight:700; color:#81c784;">↑ Maior</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 19 — CVM 175 ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Nova Regulação — Resolução CVM 175</h2>
+    <p style="margin-bottom:24px;">Em vigor desde <strong>outubro de 2023</strong>. Maior modernização da regulação de FIDCs desde a ICVM 356.</p>
+    <div class="cards">
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Acesso ampliado</h3>
+        <p style="font-size:.9rem;">Investidor de <strong>varejo pode acessar FIDC</strong> — antes restrito a investidores qualificados.</p>
+      </div>
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Estrutura flexível</h3>
+        <p style="font-size:.9rem;">Cotas com diferentes direitos podem coexistir. Maior criatividade na arquitetura do produto.</p>
+      </div>
+      <div class="card purple-card">
+        <h3 style="color:#ce93d8;">Custodiante + rigoroso</h3>
+        <p style="font-size:.9rem;">Verificação de lastro mais exigente. Maior responsabilidade na validação dos recebíveis.</p>
+      </div>
+    </div>
+    <div class="callout green" style="margin-top:20px;">
+      <strong>Tendência:</strong> FIDCs abertos com liquidez diária passam a ser possíveis em certas condições — aproxima o produto do mercado de fundos líquidos.
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 28 — DUPLICATA ESCRITURAL ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>Duplicata Escritural — Evolução Regulatória</h2>
+    <div style="display:flex; align-items:flex-start; gap:0; margin-bottom:22px; margin-top:8px;">
+      <div style="display:flex; align-items:center; width:100%;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; min-width:90px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:#7b1fa2; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.78rem; color:#fff; flex-shrink:0;">1968</div>
+          <p style="font-size:.7rem; color:#90a4ae; text-align:center; max-width:82px; line-height:1.3;">Lei 5.474<br>Duplicata cartular</p>
+        </div>
+        <div style="flex:1; height:2px; background:rgba(142,36,170,.35); margin-bottom:18px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; min-width:90px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:#8e24aa; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.78rem; color:#fff; flex-shrink:0;">2018</div>
+          <p style="font-size:.7rem; color:#90a4ae; text-align:center; max-width:82px; line-height:1.3;">Lei 13.775<br>Emissão escritural via BCB</p>
+        </div>
+        <div style="flex:1; height:2px; background:rgba(142,36,170,.35); margin-bottom:18px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; min-width:90px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:#9c27b0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.78rem; color:#fff; flex-shrink:0;">2020</div>
+          <p style="font-size:.7rem; color:#90a4ae; text-align:center; max-width:82px; line-height:1.3;">Res. CMN 4.815<br>Registradores autorizados</p>
+        </div>
+        <div style="flex:1; height:2px; background:rgba(142,36,170,.35); margin-bottom:18px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; min-width:90px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:#ab47bc; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.78rem; color:#fff; flex-shrink:0;">2023</div>
+          <p style="font-size:.7rem; color:#90a4ae; text-align:center; max-width:82px; line-height:1.3;">Res. BCB 339<br>Funcionamento técnico</p>
+        </div>
+        <div style="flex:1; height:2px; background:rgba(67,160,71,.5); margin-bottom:18px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; min-width:90px;">
+          <div style="width:40px; height:40px; border-radius:50%; background:#43a047; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.78rem; color:#fff; flex-shrink:0;">2028</div>
+          <p style="font-size:.7rem; color:#81c784; text-align:center; max-width:82px; line-height:1.3;">Pleno funcionamento<br>todos os sacadores</p>
+        </div>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <h3 style="margin-bottom:12px;">Problemas Resolvidos</h3>
+        <table style="font-size:.84rem;">
+          <tr><th>Problema anterior</th><th>Solução escritural</th></tr>
+          <tr><td>Cessão dupla do mesmo recebível</td><td style="color:#81c784;">Unicidade garantida pelo registrador</td></tr>
+          <tr><td>Validade jurídica questionável</td><td style="color:#81c784;">Validação baseada na NF-e</td></tr>
+          <tr><td>Banco "verticalizava" o crédito</td><td style="color:#81c784;">Opt-in: empresa escolhe o portador</td></tr>
+          <tr><td>Rastreabilidade inexistente</td><td style="color:#81c784;">Histórico completo em tempo real</td></tr>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div class="col">
+        <h3 style="margin-bottom:12px;">Impactos para FIDCs</h3>
+        <div style="display:flex; flex-direction:column; gap:9px;">
+          <div class="callout green" style="padding:10px 14px; font-size:.87rem; margin-top:0;"><strong>Segurança jurídica</strong> — fim definitivo do risco de dupla cessão</div>
+          <div class="callout green" style="padding:10px 14px; font-size:.87rem; margin-top:0;"><strong>Rastreabilidade total</strong> em tempo real por qualquer participante autorizado</div>
+          <div class="callout green" style="padding:10px 14px; font-size:.87rem; margin-top:0;"><strong>Novos originadores</strong> com barreira técnica muito menor entram no mercado</div>
+          <div class="callout green" style="padding:10px 14px; font-size:.87rem; margin-top:0;"><strong>FIDCs automatizados</strong> baseados em Unidades de Duplicata Escritural (UDE)</div>
+          <div class="callout green" style="padding:10px 14px; font-size:.87rem; margin-top:0;"><strong>Interoperabilidade</strong> entre registradoras (CIP e B3) desde 2023</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 29 — 12 SOLUÇÕES FIDC ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent purple"></div>
+    <h2>12 Soluções Estruturais via FIDC</h2>
+    <p style="margin-bottom:14px; font-size:.85rem; color:#90a4ae;">Para cada momento e necessidade, há uma estrutura FIDC adequada.</p>
+    <table style="font-size:.78rem;">
+      <tr>
+        <th style="width:4%;">#</th>
+        <th style="width:22%;">Solução</th>
+        <th>Benefício para a Empresa</th>
+        <th>Como o FIDC atua</th>
+      </tr>
+      <tr><td>1</td><td><strong>Consignado Privado</strong></td><td>Crédito a colaboradores sem capital próprio</td><td>Compra contratos via desconto direto em folha</td></tr>
+      <tr><td>2</td><td><strong>Antecipação com Regresso</strong></td><td>Vendas a prazo viram caixa imediato · cedente mantém coobrigação</td><td>Compra recebíveis com coobrigação em caso de inadimplência</td></tr>
+      <tr><td>3</td><td><strong>True Sale (sem regresso)</strong></td><td>Retirada total dos ativos do balanço · transferência plena do risco</td><td>Adquire definitivamente os créditos — sem coobrigação do cedente</td></tr>
+      <tr><td>4</td><td><strong>Stop-Supply</strong></td><td>Amplia vendas a grandes compradores usando a relevância comercial</td><td>Financia via recebíveis; fornecedor pode parar entregas em inadimplência</td></tr>
+      <tr><td>5</td><td><strong>Antecipação a Fornecedores</strong></td><td>Alonga prazo de pagamento sem comprometer a cadeia produtiva</td><td>Antecipa recursos ao fornecedor; taxa baseada no risco do sacado âncora</td></tr>
+      <tr><td>6</td><td><strong>Cash Pooling</strong></td><td>Otimiza liquidez intragrupo sem IOF de mútuos intercompany</td><td>Empresa superavitária aplica; deficitária cede recebíveis ao fundo</td></tr>
+      <tr><td>7</td><td><strong>Otimização de Capital</strong></td><td>Renegocia / alonga dívidas caras sem afetar relacionamento bancário</td><td>Adquire debênture ou NCE; remolda a curva de amortização</td></tr>
+      <tr><td>8</td><td><strong>BTS (Build-to-Suit)</strong></td><td>Expande imóveis preservando capital durante a obra</td><td>Financia a construção; recebe pelos fluxos futuros do contrato de locação</td></tr>
+      <tr><td>9</td><td><strong>Cambial — Importação</strong></td><td>Financia ciclo logístico sem pressionar o caixa operacional</td><td>Aporta recursos; lastro é o Bill of Lading / conhecimento de embarque</td></tr>
+      <tr><td>10</td><td><strong>Cambial — Exportação</strong></td><td>Antecipa receitas em moeda estrangeira antes do embarque</td><td>Compra recebíveis de exportação convertidos via swap de câmbio</td></tr>
+      <tr><td>11</td><td><strong>Sellers Finance M&amp;A</strong></td><td>Earnout sem pressão imediata de caixa para o comprador</td><td>Antecipa parcelas futuras ao vendedor; recebe da compradora no prazo</td></tr>
+      <tr><td>12</td><td><strong>Receita Garantida</strong></td><td>Contratos recorrentes viram funding de longo prazo a custo competitivo</td><td>Lastro em fluxos garantidos — concessões, utilities, assinaturas corporativas</td></tr>
+    </table>
+  </div>
+
+  <!-- ════ SLIDE 30 — PERGUNTAS ════ -->
+  <div class="slide bg-dark">
+    <div class="slide-tag">IB na Prática</div>
+    <div class="accent gold"></div>
+    <h2>Perguntas para Discussão</h2>
+    <div class="q-list">
+      <div class="q-item"><div class="q-num">1</div><p>Por que uma empresa preferiria emitir uma debênture a pegar um empréstimo bancário?</p></div>
+      <div class="q-item"><div class="q-num">2</div><p>Qual é o incentivo do cedente em manter as cotas subordinadas do FIDC?</p></div>
+      <div class="q-item"><div class="q-num">3</div><p>Como o IB ganha dinheiro em cada etapa do processo?</p></div>
+      <div class="q-item"><div class="q-num">4</div><p>O que acontece com um FIDC quando a inadimplência da carteira ultrapassa o esperado?</p></div>
+      <div class="q-item"><div class="q-num">5</div><p>Por que o custo de capital de um FIDC pode ser menor do que o custo de crédito direto ao cedente?</p></div>
+    </div>
+  </div>
+
+  <!-- ════ SLIDE 21 — ENCERRAMENTO ════ -->
+  <div class="slide bg-title">
+    <div class="slide-tag">IB na Prática</div>
+    <div style="max-width:620px;">
+      <div class="accent"></div>
+      <h1 style="font-size:2.4rem;">Obrigado!</h1>
+      <p class="subtitle" style="margin-top:16px;">IB na Prática — Mercado de Capitais</p>
+      <div style="margin-top:48px; display:flex; flex-direction:column; gap:10px;">
+        <p style="color:#546e7a; font-size:.9rem;">Mercado de Capitais · Crédito &amp; Equity · Processo de IB · FIDC</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ── NAV ── -->
+<div id="nav">
+  <button class="nav-btn" id="prev" title="Anterior (←)">‹</button>
+  <span id="counter">1 / 35</span>
+  <button class="nav-btn" id="next" title="Próximo (→)">›</button>
+</div>
+
+<div id="progress"><div id="progress-bar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const bar = document.getElementById('progress-bar');
+  let cur = 0;
+
+  function go(n) {
+    slides[cur].classList.remove('active');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    counter.textContent = (cur + 1) + ' / ' + slides.length;
+    bar.style.width = ((cur + 1) / slides.length * 100) + '%';
+  }
+
+  document.getElementById('next').addEventListener('click', () => go(cur + 1));
+  document.getElementById('prev').addEventListener('click', () => go(cur - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                   { e.preventDefault(); go(cur - 1); }
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End')  go(slides.length - 1);
+  });
+
+  // swipe
+  let tx = 0;
+  document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+  document.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) go(dx < 0 ? cur + 1 : cur - 1);
+  });
+
+  go(0);
+</script>
+</body>
+</html>
