@@ -318,15 +318,15 @@ const questions = [
     explanation: "A empresa deduz a despesa financeira da base de IRPJ + CSLL. Com alíquota combinada de 34%, cada R$ 1,00 de despesa financeira gera R$ 0,34 de economia fiscal real."
   },
   {
-    text: "Um FIDC de Consignado precisa de uma taxa mínima de cessão de 30% a.a. para ser viável. A cota Sênior custa 15% a.a., os custos operacionais somam 1,5% a.a. e a inadimplência esperada é 1,5% a.a. Qual deve ser, no mínimo, o retorno da cota JR para o deal fechar?",
+    text: "Um FIDC tem PL de R$ 100MM com estrutura: Sênior 65%, Mezanino 15%, JR 20%. O retorno acumulado da cota JR ainda não distribuído é de R$ 4MM. A partir de qual patamar de inadimplência acumulada a cota Mezanino começa a ser atingida?",
     options: [
-      "8% a.a.",
-      "10% a.a.",
-      "12% a.a.",
-      "15% a.a."
+      "R$ 15MM — equivalente ao valor do próprio Mezanino",
+      "R$ 20MM — equivalente ao principal da cota JR",
+      "R$ 24MM — principal da JR mais o retorno acumulado não distribuído",
+      "R$ 35MM — soma de JR e Mezanino juntos"
     ],
     correct: 2,
-    explanation: "Conta inversa: 30% (cessão) − 15% (SR) − 1,5% (custos) − 1,5% (inadimplência) = 12% a.a. para a cota JR. Abaixo disso o retorno não compensa o risco do acionista e o deal perde atratividade — a estrutura simplesmente não fecha."
+    explanation: "A cota JR é o colchão do Mezanino. Seu buffer total é o principal (R$ 20MM) mais o retorno acumulado ainda não distribuído (R$ 4MM) = R$ 24MM. Somente quando as perdas acumuladas superam esse valor o Mezanino começa a ser corroído. O retorno acumulado da JR também protege as cotas sênior — até que seja distribuído ao cotista."
   },
   {
     text: "Qual a diferença entre um FIDC 'performado' e um FIDC 'a performar'?",
