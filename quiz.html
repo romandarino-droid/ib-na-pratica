@@ -18,255 +18,150 @@
     padding: 24px;
   }
 
-  .quiz-wrap {
-    width: 100%;
-    max-width: 760px;
-  }
+  .quiz-wrap { width: 100%; max-width: 760px; }
 
   /* Header */
   .quiz-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 28px;
   }
   .quiz-brand {
-    font-size: .75rem;
-    font-weight: 700;
-    letter-spacing: .12em;
-    color: #ce93d8;
-    text-transform: uppercase;
+    font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+    color: #ce93d8; text-transform: uppercase;
   }
-  .quiz-progress-wrap {
-    flex: 1;
-    margin: 0 20px;
-  }
+  .quiz-progress-wrap { flex: 1; margin: 0 20px; }
   .quiz-progress-bar {
-    height: 4px;
-    background: rgba(255,255,255,.08);
-    border-radius: 2px;
-    overflow: hidden;
+    height: 4px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden;
   }
   .quiz-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #7b1fa2, #ce93d8);
-    border-radius: 2px;
-    transition: width .4s ease;
+    height: 100%; background: linear-gradient(90deg, #7b1fa2, #ce93d8);
+    border-radius: 2px; transition: width .4s ease;
   }
-  .quiz-counter {
-    font-size: .82rem;
-    color: #78909c;
-    white-space: nowrap;
-  }
+  .quiz-counter { font-size: .82rem; color: #78909c; white-space: nowrap; }
 
   /* Card */
   .quiz-card {
-    background: #161b22;
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 18px;
-    padding: 40px;
-    margin-bottom: 20px;
+    background: #161b22; border: 1px solid rgba(255,255,255,.07);
+    border-radius: 18px; padding: 40px; margin-bottom: 20px;
   }
 
+  /* Name screen */
+  .name-screen h2 {
+    font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 10px;
+  }
+  .name-screen p { font-size: 1rem; color: #78909c; margin-bottom: 28px; }
+  .name-input {
+    width: 100%; padding: 14px 18px; font-size: 1rem;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px; color: #fff; outline: none; margin-bottom: 16px;
+    transition: border-color .15s;
+  }
+  .name-input:focus { border-color: rgba(206,147,216,.5); }
+  .name-input::placeholder { color: #4a5568; }
+
+  .btn-start {
+    width: 100%; padding: 14px; font-size: 1rem; font-weight: 600;
+    background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+    border: none; border-radius: 10px; color: #fff; cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn-start:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-start:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* Question */
   .question-num {
-    font-size: .75rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-    color: #ce93d8;
-    text-transform: uppercase;
-    margin-bottom: 14px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+    color: #ce93d8; text-transform: uppercase; margin-bottom: 14px;
   }
-
   .question-text {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #fff;
-    line-height: 1.55;
-    margin-bottom: 32px;
+    font-size: 1.25rem; font-weight: 600; color: #fff;
+    line-height: 1.55; margin-bottom: 32px;
   }
 
   /* Options */
-  .options {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
+  .options { display: flex; flex-direction: column; gap: 12px; }
   .option {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
+    display: flex; align-items: flex-start; gap: 14px;
     padding: 14px 18px;
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.08);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background .15s, border-color .15s, transform .1s;
-    text-align: left;
-    width: 100%;
-    color: #b0bec5;
-    font-size: 1rem;
-    line-height: 1.5;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px; cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
+    text-align: left; width: 100%; color: #b0bec5; font-size: 1rem; line-height: 1.5;
   }
   .option:hover:not(.locked) {
-    background: rgba(255,255,255,.06);
-    border-color: rgba(206,147,216,.35);
-    color: #e0e0e0;
-    transform: translateX(3px);
+    background: rgba(255,255,255,.06); border-color: rgba(206,147,216,.35);
+    color: #e0e0e0; transform: translateX(3px);
   }
-
   .option-letter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.12);
-    font-size: .82rem;
-    font-weight: 700;
-    color: #90a4ae;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+    font-size: .82rem; font-weight: 700; color: #90a4ae; flex-shrink: 0;
     transition: background .15s, border-color .15s;
   }
-
-  .option.correct {
-    background: rgba(67,160,71,.15);
-    border-color: rgba(67,160,71,.6);
-    color: #a5d6a7;
-  }
-  .option.correct .option-letter {
-    background: rgba(67,160,71,.3);
-    border-color: rgba(67,160,71,.8);
-    color: #a5d6a7;
-  }
-  .option.wrong {
-    background: rgba(229,57,53,.12);
-    border-color: rgba(229,57,53,.5);
-    color: #ef9a9a;
-  }
-  .option.wrong .option-letter {
-    background: rgba(229,57,53,.25);
-    border-color: rgba(229,57,53,.7);
-    color: #ef9a9a;
-  }
-  .option.dimmed {
-    opacity: .38;
-  }
-  .option.locked {
-    cursor: default;
-  }
+  .option.correct { background: rgba(67,160,71,.15); border-color: rgba(67,160,71,.6); color: #a5d6a7; }
+  .option.correct .option-letter { background: rgba(67,160,71,.3); border-color: rgba(67,160,71,.8); color: #a5d6a7; }
+  .option.wrong { background: rgba(229,57,53,.12); border-color: rgba(229,57,53,.5); color: #ef9a9a; }
+  .option.wrong .option-letter { background: rgba(229,57,53,.25); border-color: rgba(229,57,53,.7); color: #ef9a9a; }
+  .option.dimmed { opacity: .38; }
+  .option.locked { cursor: default; }
 
   /* Feedback */
-  .feedback {
-    display: none;
-    margin-top: 20px;
-    padding: 14px 18px;
-    border-radius: 10px;
-    font-size: .95rem;
-    line-height: 1.5;
-  }
+  .feedback { display: none; margin-top: 20px; padding: 14px 18px; border-radius: 10px; font-size: .95rem; line-height: 1.5; }
   .feedback.show { display: block; }
-  .feedback.ok {
-    background: rgba(67,160,71,.12);
-    border: 1px solid rgba(67,160,71,.4);
-    color: #a5d6a7;
-  }
-  .feedback.nok {
-    background: rgba(229,57,53,.1);
-    border: 1px solid rgba(229,57,53,.35);
-    color: #ef9a9a;
-  }
-  .feedback strong { color: inherit; }
+  .feedback.ok { background: rgba(67,160,71,.12); border: 1px solid rgba(67,160,71,.4); color: #a5d6a7; }
+  .feedback.nok { background: rgba(229,57,53,.1); border: 1px solid rgba(229,57,53,.35); color: #ef9a9a; }
 
   /* Next btn */
   .btn-next {
-    display: none;
-    margin-top: 24px;
-    padding: 14px 32px;
+    display: none; margin-top: 24px; padding: 14px 32px;
     background: linear-gradient(135deg, #7b1fa2, #ab47bc);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity .15s, transform .1s;
+    border: none; border-radius: 10px; color: #fff; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: opacity .15s, transform .1s;
   }
   .btn-next.show { display: block; }
   .btn-next:hover { opacity: .88; transform: translateY(-1px); }
 
   /* Score screen */
-  .score-screen {
-    display: none;
-    text-align: center;
-    padding: 20px 0;
-  }
+  .score-screen { display: none; text-align: center; padding: 20px 0; }
   .score-screen.show { display: block; }
-
   .score-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 4px solid #ce93d8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 28px;
-    background: rgba(142,36,170,.12);
+    width: 120px; height: 120px; border-radius: 50%; border: 4px solid #ce93d8;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    margin: 0 auto 28px; background: rgba(142,36,170,.12);
   }
-  .score-num {
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: #ce93d8;
-    line-height: 1;
+  .score-num { font-size: 2.4rem; font-weight: 700; color: #ce93d8; line-height: 1; }
+  .score-den { font-size: .9rem; color: #90a4ae; margin-top: 2px; }
+  .score-title { font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+  .score-sub { font-size: 1rem; color: #90a4ae; margin-bottom: 20px; }
+  .score-name-badge {
+    display: inline-block; padding: 6px 18px; border-radius: 20px;
+    background: rgba(206,147,216,.12); border: 1px solid rgba(206,147,216,.3);
+    color: #ce93d8; font-size: .9rem; font-weight: 600; margin-bottom: 24px;
   }
-  .score-den {
-    font-size: .9rem;
-    color: #90a4ae;
-    margin-top: 2px;
-  }
-
-  .score-title {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 10px;
-  }
-  .score-sub {
-    font-size: 1rem;
-    color: #90a4ae;
-    margin-bottom: 32px;
-  }
-
-  .score-breakdown {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 32px;
-    flex-wrap: wrap;
-  }
-  .score-tag {
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: .88rem;
-    font-weight: 600;
-  }
+  .score-breakdown { display: flex; justify-content: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  .score-tag { padding: 6px 16px; border-radius: 20px; font-size: .88rem; font-weight: 600; }
   .score-tag.ok { background: rgba(67,160,71,.15); color: #a5d6a7; border: 1px solid rgba(67,160,71,.35); }
   .score-tag.nok { background: rgba(229,57,53,.12); color: #ef9a9a; border: 1px solid rgba(229,57,53,.3); }
 
+  .submit-status {
+    font-size: .88rem; color: #78909c; margin-bottom: 20px; min-height: 20px;
+  }
+  .submit-status.ok { color: #a5d6a7; }
+  .submit-status.err { color: #ef9a9a; }
+
+  .score-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-leaderboard {
+    padding: 13px 28px; background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+    border: none; border-radius: 10px; color: #fff; font-size: .95rem; font-weight: 600;
+    cursor: pointer; text-decoration: none; display: inline-block;
+    transition: opacity .15s;
+  }
+  .btn-leaderboard:hover { opacity: .88; }
   .btn-restart {
-    padding: 14px 36px;
-    background: transparent;
-    border: 1px solid rgba(206,147,216,.4);
-    border-radius: 10px;
-    color: #ce93d8;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .15s;
+    padding: 13px 28px; background: transparent;
+    border: 1px solid rgba(206,147,216,.4); border-radius: 10px;
+    color: #ce93d8; font-size: .95rem; font-weight: 600;
+    cursor: pointer; transition: background .15s;
   }
   .btn-restart:hover { background: rgba(206,147,216,.08); }
 
@@ -278,7 +173,6 @@
 </style>
 </head>
 <body>
-
 <div class="quiz-wrap">
 
   <div class="quiz-header">
@@ -291,8 +185,18 @@
     <span class="quiz-counter" id="counter">1 / 10</span>
   </div>
 
-  <!-- Question area -->
-  <div class="quiz-card" id="questionCard">
+  <!-- Name screen -->
+  <div class="quiz-card name-screen" id="nameScreen">
+    <h2>Quiz — IB na Prática</h2>
+    <p>Digite seu nome para registrar sua pontuação no ranking da turma.</p>
+    <input class="name-input" id="nameInput" type="text" placeholder="Seu nome completo" maxlength="60"
+      oninput="document.getElementById('btnStart').disabled = this.value.trim().length < 2"
+      onkeydown="if(event.key==='Enter') startQuiz()">
+    <button class="btn-start" id="btnStart" onclick="startQuiz()" disabled>Começar →</button>
+  </div>
+
+  <!-- Question card -->
+  <div class="quiz-card" id="questionCard" style="display:none;">
     <div class="question-num" id="qNum">Pergunta 1</div>
     <div class="question-text" id="qText"></div>
     <div class="options" id="optionsWrap"></div>
@@ -308,13 +212,22 @@
     </div>
     <div class="score-title" id="scoreTitle"></div>
     <div class="score-sub" id="scoreSub"></div>
+    <div class="score-name-badge" id="scoreNameBadge"></div>
     <div class="score-breakdown" id="scoreBreakdown"></div>
-    <button class="btn-restart" onclick="restart()">Refazer o quiz</button>
+    <div class="submit-status" id="submitStatus"></div>
+    <div class="score-actions">
+      <a class="btn-leaderboard" href="leaderboard.html">Ver ranking da turma →</a>
+      <button class="btn-restart" onclick="restart()">Refazer</button>
+    </div>
   </div>
 
 </div>
-
 <script>
+// ── CONFIG ──────────────────────────────────────────────────
+// Cole aqui a URL do seu Google Apps Script após o deploy:
+const SCRIPT_URL = '';
+// ────────────────────────────────────────────────────────────
+
 const questions = [
   {
     text: "O que é o mercado de capitais?",
@@ -325,7 +238,7 @@ const questions = [
       "Sistema de câmbio entre moedas estrangeiras"
     ],
     correct: 1,
-    explanation: "O mercado de capitais é o sistema que conecta poupadores (investidores) a tomadores (empresas, projetos), transferindo o risco diretamente ao investidor — diferente do crédito bancário, onde o risco fica no balanço do banco."
+    explanation: "O mercado de capitais conecta poupadores a tomadores, transferindo o risco diretamente ao investidor — diferente do crédito bancário, onde o risco fica no balanço do banco."
   },
   {
     text: "Qual instrumento de renda fixa pode ser usado por qualquer setor da economia para securitizar recebíveis?",
@@ -336,7 +249,7 @@ const questions = [
       "FIDC — Fundo de Investimento em Direitos Creditórios"
     ],
     correct: 3,
-    explanation: "O FIDC é o único instrumento de securitização sem restrição setorial — qualquer empresa com recebíveis (duplicatas, CCBs, contratos etc.) pode estruturar um FIDC, ao contrário do CRI (imobiliário) e CRA (agronegócio)."
+    explanation: "O FIDC é o único instrumento de securitização sem restrição setorial. Ao contrário do CRI (imobiliário) e CRA (agronegócio), qualquer empresa com recebíveis pode estruturar um FIDC."
   },
   {
     text: "Em um FIDC com três classes de cotas (Sênior, Mezanino e Subordinada), qual absorve as primeiras perdas da carteira?",
@@ -347,7 +260,7 @@ const questions = [
       "O custodiante, que é o responsável legal pelo lastro"
     ],
     correct: 2,
-    explanation: "A Cota Subordinada (JR) absorve as primeiras perdas antes de qualquer impacto na Sênior ou Mezanino. É o mecanismo de 'skin in the game' — geralmente subscrita pelo próprio cedente, alinhando seus incentivos à qualidade da carteira."
+    explanation: "A Cota Subordinada (JR) absorve as primeiras perdas antes de qualquer impacto na Sênior ou Mezanino. É o 'skin in the game' — geralmente subscrita pelo próprio cedente."
   },
   {
     text: "Na operação de Risco Sacado, quem é o devedor do FIDC?",
@@ -358,7 +271,7 @@ const questions = [
       "O administrador, que é o responsável legal perante a CVM"
     ],
     correct: 1,
-    explanation: "No Risco Sacado, o FIDC compra o recebível com base no risco da empresa âncora (sacado) — não do fornecedor. O fornecedor recebe à vista com desconto; a empresa âncora paga ao FIDC no vencimento, geralmente 90+ dias."
+    explanation: "No Risco Sacado, o FIDC compra o recebível com base no risco da empresa âncora (sacado). O fornecedor recebe à vista com desconto; a empresa âncora paga ao FIDC no vencimento."
   },
   {
     text: "Qual participante do FIDC é responsável por verificar o lastro dos recebíveis cedidos?",
@@ -369,7 +282,7 @@ const questions = [
       "Agente de Cobrança — faz a régua de inadimplência"
     ],
     correct: 2,
-    explanation: "O Custodiante é o guardião dos ativos: valida que os recebíveis existem (nota fiscal, CCB etc.), verifica elegibilidade e garante a integridade do lastro. A Resolução CVM 175 aumentou significativamente suas obrigações nessa função."
+    explanation: "O Custodiante valida que os recebíveis existem (NF, CCB etc.) e verifica a elegibilidade. A Resolução CVM 175 aumentou significativamente suas obrigações nessa função."
   },
   {
     text: "O que são os critérios de elegibilidade de um FIDC?",
@@ -380,7 +293,7 @@ const questions = [
       "Metas de retorno mínimo do gestor para cada classe de cota"
     ],
     correct: 1,
-    explanation: "Os critérios de elegibilidade são as regras do regulamento que filtram quais recebíveis entram no fundo. Exemplos: prazo máximo (ex: 180 dias), concentração máxima por sacado (ex: 5% do PL), sacados sem atraso, notas fiscais com CNPJ válido."
+    explanation: "Os critérios de elegibilidade filtram quais recebíveis entram no fundo — ex: prazo máximo, concentração máxima por sacado, sacados sem atraso, notas fiscais com CNPJ válido."
   },
   {
     text: "Qual modalidade de FIDC tem como característica o desconto direto em folha de pagamento de servidores públicos e militares?",
@@ -391,7 +304,7 @@ const questions = [
       "FIDC Imobiliário — lastreado em CCI e contratos de aluguel"
     ],
     correct: 2,
-    explanation: "O Consignado Público tem desconto direto em folha de servidores públicos (INSS, SIAPE, Forças Armadas, Estados), margem consignável de até 45% e histórico de inadimplência controlada. O risco principal é o ente público (CAPAG), não o servidor."
+    explanation: "O Consignado Público tem desconto direto em folha com margem consignável de até 45% e inadimplência historicamente controlada. O risco principal é o ente público (CAPAG), não o servidor."
   },
   {
     text: "Qual a principal vantagem tributária do FIDC para a empresa que emite debênture ou cede recebíveis ao fundo?",
@@ -402,7 +315,7 @@ const questions = [
       "O ganho de capital na cessão dos recebíveis é isento de imposto"
     ],
     correct: 1,
-    explanation: "A empresa deduz a despesa financeira (juros pagos ao FIDC) da base de IRPJ + CSLL. Com alíquota combinada de 34%, cada R$ 1,00 de despesa financeira gera R$ 0,34 de economia fiscal real — esse é o motor do triângulo de eficiência tributária."
+    explanation: "A empresa deduz a despesa financeira da base de IRPJ + CSLL. Com alíquota combinada de 34%, cada R$ 1,00 de despesa financeira gera R$ 0,34 de economia fiscal real."
   },
   {
     text: "Qual era o Patrimônio Líquido total do mercado de FIDCs no Brasil em 2025?",
@@ -413,7 +326,7 @@ const questions = [
       "R$ 1,2 trilhão"
     ],
     correct: 2,
-    explanation: "O mercado de FIDCs cresceu de R$ 308 bilhões (2021) para R$ 736 bilhões (2025), um crescimento de ~139%. No mesmo período, o número de fundos saltou de 1.546 para 3.859 e o número de contas de 28 mil para 369 mil."
+    explanation: "O mercado cresceu de R$ 308bi (2021) para R$ 736bi (2025), alta de ~139%. O número de fundos saltou de 1.546 para 3.859 e o de contas de 28 mil para 369 mil."
   },
   {
     text: "Qual a diferença entre um FIDC 'performado' e um FIDC 'a performar'?",
@@ -424,13 +337,22 @@ const questions = [
       "No performado, o cedente é sempre uma instituição financeira regulada"
     ],
     correct: 1,
-    explanation: "Em um FIDC performado, o bem ou serviço já foi entregue — a dívida é certa (ex: duplicatas, parcelas de cartão). Em um FIDC 'a performar', o crédito depende de uma entrega futura (ex: mensalidades de escola, assinaturas). O 'a performar' carrega risco adicional de descumprimento contratual."
+    explanation: "No performado, o bem/serviço já foi entregue — a dívida é certa (ex: duplicatas). No 'a performar', o crédito depende de entrega futura (ex: mensalidades de escola), adicionando risco de descumprimento."
   }
 ];
 
 let current = 0;
 let score = 0;
-let answered = [];
+let playerName = '';
+
+function startQuiz() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (name.length < 2) return;
+  playerName = name;
+  document.getElementById('nameScreen').style.display = 'none';
+  document.getElementById('questionCard').style.display = 'block';
+  render();
+}
 
 function render() {
   const q = questions[current];
@@ -441,11 +363,10 @@ function render() {
 
   const wrap = document.getElementById('optionsWrap');
   wrap.innerHTML = '';
-  const letters = ['A', 'B', 'C', 'D'];
-  q.options.forEach((opt, i) => {
+  ['A','B','C','D'].forEach((letter, i) => {
     const btn = document.createElement('button');
     btn.className = 'option';
-    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.innerHTML = `<span class="option-letter">${letter}</span><span>${q.options[i]}</span>`;
     btn.onclick = () => selectOption(i);
     wrap.appendChild(btn);
   });
@@ -459,7 +380,7 @@ function selectOption(chosen) {
   const q = questions[current];
   const opts = document.querySelectorAll('.option');
   const fb = document.getElementById('feedback');
-  const letters = ['A', 'B', 'C', 'D'];
+  const letters = ['A','B','C','D'];
 
   opts.forEach(o => o.classList.add('locked'));
 
@@ -468,14 +389,12 @@ function selectOption(chosen) {
     fb.className = 'feedback ok show';
     fb.innerHTML = `<strong>✓ Correto!</strong> ${q.explanation}`;
     score++;
-    answered.push(true);
   } else {
     opts[chosen].classList.add('wrong');
     opts[q.correct].classList.add('correct');
     opts.forEach((o, i) => { if (i !== chosen && i !== q.correct) o.classList.add('dimmed'); });
     fb.className = 'feedback nok show';
     fb.innerHTML = `<strong>✗ Incorreto.</strong> A resposta certa é <strong>${letters[q.correct]}</strong>. ${q.explanation}`;
-    answered.push(false);
   }
 
   document.getElementById('btnNext').className = 'btn-next show';
@@ -484,11 +403,8 @@ function selectOption(chosen) {
 
 function nextQuestion() {
   current++;
-  if (current >= questions.length) {
-    showScore();
-  } else {
-    render();
-  }
+  if (current >= questions.length) showScore();
+  else render();
 }
 
 function showScore() {
@@ -498,45 +414,58 @@ function showScore() {
 
   const screen = document.getElementById('scoreScreen');
   screen.classList.add('show');
-
   document.getElementById('scoreNum').textContent = score;
+  document.getElementById('scoreNameBadge').textContent = playerName;
 
   const pct = (score / questions.length) * 100;
   let title, sub;
-  if (pct === 100) {
-    title = 'Perfeito! 🏆';
-    sub = 'Você domina o conteúdo do curso. Está pronto para o mercado.';
-  } else if (pct >= 80) {
-    title = 'Muito bem!';
-    sub = 'Ótimo domínio do conteúdo. Revise as questões que errou.';
-  } else if (pct >= 60) {
-    title = 'Bom resultado.';
-    sub = 'Você assimilou o essencial. Vale revisar os blocos de FIDC.';
-  } else {
-    title = 'Continue estudando.';
-    sub = 'Revise os materiais dos blocos 2 a 5 e refaça o quiz.';
-  }
+  if (pct === 100)     { title = 'Perfeito! 🏆';     sub = 'Você domina o conteúdo. Está pronto para o mercado.'; }
+  else if (pct >= 80)  { title = 'Muito bem!';        sub = 'Ótimo domínio. Revise as questões que errou.'; }
+  else if (pct >= 60)  { title = 'Bom resultado.';    sub = 'Você assimilou o essencial. Vale revisar os blocos de FIDC.'; }
+  else                 { title = 'Continue estudando.'; sub = 'Revise os materiais dos blocos 2 a 5 e refaça o quiz.'; }
 
   document.getElementById('scoreTitle').textContent = title;
   document.getElementById('scoreSub').textContent = sub;
-
-  const breakdown = document.getElementById('scoreBreakdown');
-  breakdown.innerHTML = `
+  document.getElementById('scoreBreakdown').innerHTML = `
     <span class="score-tag ok">✓ ${score} corretas</span>
     <span class="score-tag nok">✗ ${questions.length - score} incorretas</span>
   `;
+
+  submitScore();
+}
+
+function submitScore() {
+  const status = document.getElementById('submitStatus');
+  if (!SCRIPT_URL) {
+    status.textContent = '';
+    return;
+  }
+  status.textContent = 'Enviando resultado...';
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ nome: playerName, pontuacao: score, total: questions.length })
+  })
+  .then(() => {
+    status.className = 'submit-status ok';
+    status.textContent = '✓ Resultado enviado para o ranking da turma!';
+  })
+  .catch(() => {
+    status.className = 'submit-status err';
+    status.textContent = 'Não foi possível enviar. Verifique a conexão.';
+  });
 }
 
 function restart() {
-  current = 0;
-  score = 0;
-  answered = [];
-  document.getElementById('questionCard').style.display = '';
+  current = 0; score = 0; playerName = '';
   document.getElementById('scoreScreen').classList.remove('show');
-  render();
+  document.getElementById('nameScreen').style.display = 'block';
+  document.getElementById('nameInput').value = '';
+  document.getElementById('btnStart').disabled = true;
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('counter').textContent = '1 / 10';
 }
-
-render();
 </script>
 </body>
 </html>

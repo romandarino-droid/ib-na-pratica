@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking — IB na Prática</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0d1117; color: #e0e0e0;
+    min-height: 100vh; display: flex; align-items: flex-start;
+    justify-content: center; padding: 40px 24px;
+  }
+  .wrap { width: 100%; max-width: 680px; }
+
+  .brand {
+    font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+    color: #ce93d8; text-transform: uppercase; margin-bottom: 8px;
+  }
+  h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .subtitle { font-size: .95rem; color: #78909c; margin-bottom: 32px; }
+
+  /* Card */
+  .card {
+    background: #161b22; border: 1px solid rgba(255,255,255,.07);
+    border-radius: 18px; overflow: hidden; margin-bottom: 16px;
+  }
+
+  /* Podium top 3 */
+  .podium {
+    display: flex; gap: 12px; padding: 24px; align-items: flex-end;
+    justify-content: center;
+  }
+  .podium-item {
+    flex: 1; max-width: 180px; text-align: center;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px; padding: 16px 12px; position: relative;
+  }
+  .podium-item.first {
+    background: rgba(255,213,79,.06); border-color: rgba(255,213,79,.25);
+    padding-top: 24px;
+  }
+  .podium-item.second {
+    background: rgba(176,190,197,.05); border-color: rgba(176,190,197,.2);
+  }
+  .podium-item.third {
+    background: rgba(188,143,100,.05); border-color: rgba(188,143,100,.2);
+  }
+  .podium-medal {
+    font-size: 1.6rem; margin-bottom: 8px; display: block;
+  }
+  .podium-name {
+    font-size: .9rem; font-weight: 600; color: #fff;
+    word-break: break-word; margin-bottom: 6px;
+  }
+  .podium-score {
+    font-size: 1.4rem; font-weight: 700;
+  }
+  .first .podium-score { color: #ffe082; }
+  .second .podium-score { color: #b0bec5; }
+  .third .podium-score { color: #cd8a5a; }
+  .podium-max { font-size: .75rem; color: #546e7a; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { border-bottom: 1px solid rgba(255,255,255,.07); }
+  th {
+    padding: 14px 20px; text-align: left; font-size: .75rem;
+    font-weight: 700; letter-spacing: .08em; color: #546e7a; text-transform: uppercase;
+  }
+  th:last-child { text-align: right; }
+  td { padding: 14px 20px; font-size: .95rem; color: #b0bec5; border-bottom: 1px solid rgba(255,255,255,.04); }
+  td:last-child { text-align: right; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+
+  .rank-num { font-weight: 700; color: #546e7a; width: 32px; }
+  .player-name { color: #e0e0e0; font-weight: 500; }
+  .score-pill {
+    display: inline-block; padding: 3px 12px; border-radius: 20px;
+    font-size: .85rem; font-weight: 700; background: rgba(142,36,170,.15);
+    border: 1px solid rgba(206,147,216,.25); color: #ce93d8;
+  }
+  .score-pill.perfect { background: rgba(255,213,79,.12); border-color: rgba(255,213,79,.3); color: #ffe082; }
+  .ts { font-size: .8rem; color: #37474f; }
+
+  /* Empty / loading */
+  .state-msg {
+    text-align: center; padding: 48px 24px; color: #37474f; font-size: .95rem;
+  }
+  .state-msg .icon { font-size: 2rem; display: block; margin-bottom: 12px; }
+
+  /* Actions */
+  .actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .btn {
+    padding: 11px 22px; border-radius: 10px; font-size: .9rem; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-primary {
+    background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+    border: none; color: #fff;
+  }
+  .btn-secondary {
+    background: transparent; border: 1px solid rgba(206,147,216,.35); color: #ce93d8;
+    text-decoration: none; display: inline-block; line-height: 1.4;
+  }
+  .refresh-info { font-size: .8rem; color: #37474f; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">IB na Prática</div>
+  <h1>Ranking da Turma</h1>
+  <p class="subtitle">Resultados em tempo real — atualize a página para ver novos envios.</p>
+
+  <div id="podiumWrap"></div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>Horário</th>
+          <th>Pontuação</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="4"><div class="state-msg"><span class="icon">⏳</span>Carregando...</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="load()">↻ Atualizar ranking</button>
+    <a class="btn btn-secondary" href="quiz.html">← Voltar ao quiz</a>
+  </div>
+  <p class="refresh-info" id="lastRefresh"></p>
+</div>
+
+<script>
+// ── CONFIG — mesma URL do quiz.html ─────────────────────────
+const SCRIPT_URL = '';
+// ────────────────────────────────────────────────────────────
+
+function load() {
+  if (!SCRIPT_URL) {
+    document.getElementById('tableBody').innerHTML =
+      `<tr><td colspan="4"><div class="state-msg"><span class="icon">⚙️</span>Configure a SCRIPT_URL neste arquivo para ver o ranking.</div></td></tr>`;
+    return;
+  }
+  fetch(SCRIPT_URL + '?action=leaderboard', { redirect: 'follow' })
+    .then(r => r.json())
+    .then(render)
+    .catch(() => {
+      document.getElementById('tableBody').innerHTML =
+        `<tr><td colspan="4"><div class="state-msg"><span class="icon">⚠️</span>Não foi possível carregar. Verifique a URL do script.</div></td></tr>`;
+    });
+}
+
+function render(data) {
+  const now = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  document.getElementById('lastRefresh').textContent = `Última atualização: ${now}`;
+
+  if (!data || data.length === 0) {
+    document.getElementById('podiumWrap').innerHTML = '';
+    document.getElementById('tableBody').innerHTML =
+      `<tr><td colspan="4"><div class="state-msg"><span class="icon">📭</span>Nenhum resultado ainda. Aguardando os alunos...</div></td></tr>`;
+    return;
+  }
+
+  // Podium (top 3)
+  const medals = ['🥇','🥈','🥉'];
+  const cls = ['first','second','third'];
+  const top = data.slice(0, 3);
+  const podiumOrder = top.length >= 3 ? [1, 0, 2] : top.length === 2 ? [0, 1] : [0];
+
+  let podiumHTML = '<div class="card"><div class="podium">';
+  podiumOrder.forEach(idx => {
+    if (!top[idx]) return;
+    const p = top[idx];
+    podiumHTML += `
+      <div class="podium-item ${cls[idx]}">
+        <span class="podium-medal">${medals[idx]}</span>
+        <div class="podium-name">${esc(p.nome)}</div>
+        <div class="podium-score">${p.pontuacao}</div>
+        <div class="podium-max">/ ${p.total}</div>
+      </div>`;
+  });
+  podiumHTML += '</div></div>';
+  document.getElementById('podiumWrap').innerHTML = podiumHTML;
+
+  // Full table
+  const rows = data.map((p, i) => {
+    const isPerfect = p.pontuacao === p.total;
+    return `<tr>
+      <td class="rank-num">${i + 1}</td>
+      <td class="player-name">${esc(p.nome)}</td>
+      <td class="ts">${esc(p.data)}</td>
+      <td><span class="score-pill${isPerfect ? ' perfect' : ''}">${p.pontuacao} / ${p.total}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('tableBody').innerHTML = rows;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+load();
+</script>
+</body>
+</html>
