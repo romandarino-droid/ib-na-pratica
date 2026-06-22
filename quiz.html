@@ -318,15 +318,15 @@ const questions = [
     explanation: "A empresa deduz a despesa financeira da base de IRPJ + CSLL. Com alíquota combinada de 34%, cada R$ 1,00 de despesa financeira gera R$ 0,34 de economia fiscal real."
   },
   {
-    text: "Num FIDC de Consignado, a taxa mínima de cessão calculada é de 30% ao ano. Qual a composição correta desse 'piso'?",
+    text: "Um FIDC de Consignado precisa de uma taxa mínima de cessão de 30% a.a. para ser viável. A cota Sênior custa 15% a.a., os custos operacionais somam 1,5% a.a. e a inadimplência esperada é 1,5% a.a. Qual deve ser, no mínimo, o retorno da cota JR para o deal fechar?",
     options: [
-      "18% custo da sênior + 9% custo da JR + 3% despesas operacionais",
-      "15% custo da sênior + 12% custo da JR + 1,5% custos operacionais + 1,5% inadimplência esperada",
-      "20% custo da sênior + 8% custo da JR + 2% inadimplência esperada",
-      "12% custo da sênior + 15% custo da JR + 1,5% custos + 1,5% inadimplência"
+      "8% a.a.",
+      "10% a.a.",
+      "12% a.a.",
+      "15% a.a."
     ],
-    correct: 1,
-    explanation: "O waterfall do consignado: 15% cota sênior + 12% cota JR + 1,5% custos operacionais + 1,5% inadimplência esperada = 30% taxa mínima de cessão. Abaixo desse piso o deal não 'fecha' — não sobra margem para o cedente e a estrutura deixa de ser viável."
+    correct: 2,
+    explanation: "Conta inversa: 30% (cessão) − 15% (SR) − 1,5% (custos) − 1,5% (inadimplência) = 12% a.a. para a cota JR. Abaixo disso o retorno não compensa o risco do acionista e o deal perde atratividade — a estrutura simplesmente não fecha."
   },
   {
     text: "Qual a diferença entre um FIDC 'performado' e um FIDC 'a performar'?",
