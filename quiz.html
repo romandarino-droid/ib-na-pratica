@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — IB na Prática</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0d1117;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .quiz-wrap {
+    width: 100%;
+    max-width: 760px;
+  }
+
+  /* Header */
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .quiz-brand {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    color: #ce93d8;
+    text-transform: uppercase;
+  }
+  .quiz-progress-wrap {
+    flex: 1;
+    margin: 0 20px;
+  }
+  .quiz-progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7b1fa2, #ce93d8);
+    border-radius: 2px;
+    transition: width .4s ease;
+  }
+  .quiz-counter {
+    font-size: .82rem;
+    color: #78909c;
+    white-space: nowrap;
+  }
+
+  /* Card */
+  .quiz-card {
+    background: #161b22;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 18px;
+    padding: 40px;
+    margin-bottom: 20px;
+  }
+
+  .question-num {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    color: #ce93d8;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .question-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.55;
+    margin-bottom: 32px;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+    text-align: left;
+    width: 100%;
+    color: #b0bec5;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .option:hover:not(.locked) {
+    background: rgba(255,255,255,.06);
+    border-color: rgba(206,147,216,.35);
+    color: #e0e0e0;
+    transform: translateX(3px);
+  }
+
+  .option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    font-size: .82rem;
+    font-weight: 700;
+    color: #90a4ae;
+    flex-shrink: 0;
+    transition: background .15s, border-color .15s;
+  }
+
+  .option.correct {
+    background: rgba(67,160,71,.15);
+    border-color: rgba(67,160,71,.6);
+    color: #a5d6a7;
+  }
+  .option.correct .option-letter {
+    background: rgba(67,160,71,.3);
+    border-color: rgba(67,160,71,.8);
+    color: #a5d6a7;
+  }
+  .option.wrong {
+    background: rgba(229,57,53,.12);
+    border-color: rgba(229,57,53,.5);
+    color: #ef9a9a;
+  }
+  .option.wrong .option-letter {
+    background: rgba(229,57,53,.25);
+    border-color: rgba(229,57,53,.7);
+    color: #ef9a9a;
+  }
+  .option.dimmed {
+    opacity: .38;
+  }
+  .option.locked {
+    cursor: default;
+  }
+
+  /* Feedback */
+  .feedback {
+    display: none;
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: .95rem;
+    line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok {
+    background: rgba(67,160,71,.12);
+    border: 1px solid rgba(67,160,71,.4);
+    color: #a5d6a7;
+  }
+  .feedback.nok {
+    background: rgba(229,57,53,.1);
+    border: 1px solid rgba(229,57,53,.35);
+    color: #ef9a9a;
+  }
+  .feedback strong { color: inherit; }
+
+  /* Next btn */
+  .btn-next {
+    display: none;
+    margin-top: 24px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn-next.show { display: block; }
+  .btn-next:hover { opacity: .88; transform: translateY(-1px); }
+
+  /* Score screen */
+  .score-screen {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .score-screen.show { display: block; }
+
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #ce93d8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    background: rgba(142,36,170,.12);
+  }
+  .score-num {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #ce93d8;
+    line-height: 1;
+  }
+  .score-den {
+    font-size: .9rem;
+    color: #90a4ae;
+    margin-top: 2px;
+  }
+
+  .score-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .score-sub {
+    font-size: 1rem;
+    color: #90a4ae;
+    margin-bottom: 32px;
+  }
+
+  .score-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .score-tag {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: .88rem;
+    font-weight: 600;
+  }
+  .score-tag.ok { background: rgba(67,160,71,.15); color: #a5d6a7; border: 1px solid rgba(67,160,71,.35); }
+  .score-tag.nok { background: rgba(229,57,53,.12); color: #ef9a9a; border: 1px solid rgba(229,57,53,.3); }
+
+  .btn-restart {
+    padding: 14px 36px;
+    background: transparent;
+    border: 1px solid rgba(206,147,216,.4);
+    border-radius: 10px;
+    color: #ce93d8;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-restart:hover { background: rgba(206,147,216,.08); }
+
+  @media (max-width: 600px) {
+    .quiz-card { padding: 24px 20px; }
+    .question-text { font-size: 1.1rem; }
+    .option { font-size: .95rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+
+  <div class="quiz-header">
+    <span class="quiz-brand">IB na Prática</span>
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <span class="quiz-counter" id="counter">1 / 10</span>
+  </div>
+
+  <!-- Question area -->
+  <div class="quiz-card" id="questionCard">
+    <div class="question-num" id="qNum">Pergunta 1</div>
+    <div class="question-text" id="qText"></div>
+    <div class="options" id="optionsWrap"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Próxima →</button>
+  </div>
+
+  <!-- Score screen -->
+  <div class="quiz-card score-screen" id="scoreScreen">
+    <div class="score-circle">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-den">/ 10</div>
+    </div>
+    <div class="score-title" id="scoreTitle"></div>
+    <div class="score-sub" id="scoreSub"></div>
+    <div class="score-breakdown" id="scoreBreakdown"></div>
+    <button class="btn-restart" onclick="restart()">Refazer o quiz</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "O que é o mercado de capitais?",
+    options: [
+      "Sistema onde apenas bancos emprestam dinheiro às empresas",
+      "Conjunto de mecanismos que permite poupadores direcionarem recursos a quem precisa de capital",
+      "Mercado exclusivo para negociação de ações na bolsa",
+      "Sistema de câmbio entre moedas estrangeiras"
+    ],
+    correct: 1,
+    explanation: "O mercado de capitais é o sistema que conecta poupadores (investidores) a tomadores (empresas, projetos), transferindo o risco diretamente ao investidor — diferente do crédito bancário, onde o risco fica no balanço do banco."
+  },
+  {
+    text: "Qual instrumento de renda fixa pode ser usado por qualquer setor da economia para securitizar recebíveis?",
+    options: [
+      "CRI — Certificado de Recebíveis Imobiliários",
+      "CRA — Certificado de Recebíveis do Agronegócio",
+      "Debênture comum",
+      "FIDC — Fundo de Investimento em Direitos Creditórios"
+    ],
+    correct: 3,
+    explanation: "O FIDC é o único instrumento de securitização sem restrição setorial — qualquer empresa com recebíveis (duplicatas, CCBs, contratos etc.) pode estruturar um FIDC, ao contrário do CRI (imobiliário) e CRA (agronegócio)."
+  },
+  {
+    text: "Em um FIDC com três classes de cotas (Sênior, Mezanino e Subordinada), qual absorve as primeiras perdas da carteira?",
+    options: [
+      "Cota Sênior — tem prioridade no recebimento",
+      "Cota Mezanino — fica no meio da estrutura",
+      "Cota Subordinada (JR) — funciona como colchão de proteção",
+      "O custodiante, que é o responsável legal pelo lastro"
+    ],
+    correct: 2,
+    explanation: "A Cota Subordinada (JR) absorve as primeiras perdas antes de qualquer impacto na Sênior ou Mezanino. É o mecanismo de 'skin in the game' — geralmente subscrita pelo próprio cedente, alinhando seus incentivos à qualidade da carteira."
+  },
+  {
+    text: "Na operação de Risco Sacado, quem é o devedor do FIDC?",
+    options: [
+      "O fornecedor (cedente), que vendeu os bens ou serviços",
+      "A empresa âncora (sacado), que emitiu a ordem de pagamento",
+      "O gestor do fundo, que aprovou a aquisição dos recebíveis",
+      "O administrador, que é o responsável legal perante a CVM"
+    ],
+    correct: 1,
+    explanation: "No Risco Sacado, o FIDC compra o recebível com base no risco da empresa âncora (sacado) — não do fornecedor. O fornecedor recebe à vista com desconto; a empresa âncora paga ao FIDC no vencimento, geralmente 90+ dias."
+  },
+  {
+    text: "Qual participante do FIDC é responsável por verificar o lastro dos recebíveis cedidos?",
+    options: [
+      "Gestor — define a política de crédito e aprova a aquisição",
+      "Administrador — representa o fundo perante a CVM",
+      "Custodiante — guarda e valida a existência dos recebíveis",
+      "Agente de Cobrança — faz a régua de inadimplência"
+    ],
+    correct: 2,
+    explanation: "O Custodiante é o guardião dos ativos: valida que os recebíveis existem (nota fiscal, CCB etc.), verifica elegibilidade e garante a integridade do lastro. A Resolução CVM 175 aumentou significativamente suas obrigações nessa função."
+  },
+  {
+    text: "O que são os critérios de elegibilidade de um FIDC?",
+    options: [
+      "Requisitos mínimos para investidores aplicarem nas cotas",
+      "Regras do regulamento que definem quais recebíveis podem ser cedidos ao fundo",
+      "Condições contratuais para o administrador ser contratado",
+      "Metas de retorno mínimo do gestor para cada classe de cota"
+    ],
+    correct: 1,
+    explanation: "Os critérios de elegibilidade são as regras do regulamento que filtram quais recebíveis entram no fundo. Exemplos: prazo máximo (ex: 180 dias), concentração máxima por sacado (ex: 5% do PL), sacados sem atraso, notas fiscais com CNPJ válido."
+  },
+  {
+    text: "Qual modalidade de FIDC tem como característica o desconto direto em folha de pagamento de servidores públicos e militares?",
+    options: [
+      "MC/MS — Multicedente Multisacado (fomento mercantil digital)",
+      "Consignado Privado — vinculado ao eSocial",
+      "Consignado Público — INSS, SIAPE, Forças Armadas, Estados",
+      "FIDC Imobiliário — lastreado em CCI e contratos de aluguel"
+    ],
+    correct: 2,
+    explanation: "O Consignado Público tem desconto direto em folha de servidores públicos (INSS, SIAPE, Forças Armadas, Estados), margem consignável de até 45% e histórico de inadimplência controlada. O risco principal é o ente público (CAPAG), não o servidor."
+  },
+  {
+    text: "Qual a principal vantagem tributária do FIDC para a empresa que emite debênture ou cede recebíveis ao fundo?",
+    options: [
+      "A empresa fica isenta de IRPJ e CSLL enquanto o FIDC existir",
+      "A despesa financeira paga ao FIDC é dedutível, reduzindo a base de cálculo de IRPJ + CSLL (34%)",
+      "A empresa não paga PIS/Cofins sobre a receita operacional durante a operação",
+      "O ganho de capital na cessão dos recebíveis é isento de imposto"
+    ],
+    correct: 1,
+    explanation: "A empresa deduz a despesa financeira (juros pagos ao FIDC) da base de IRPJ + CSLL. Com alíquota combinada de 34%, cada R$ 1,00 de despesa financeira gera R$ 0,34 de economia fiscal real — esse é o motor do triângulo de eficiência tributária."
+  },
+  {
+    text: "Qual era o Patrimônio Líquido total do mercado de FIDCs no Brasil em 2025?",
+    options: [
+      "R$ 308 bilhões — dado de 2021",
+      "R$ 450 bilhões",
+      "R$ 736 bilhões",
+      "R$ 1,2 trilhão"
+    ],
+    correct: 2,
+    explanation: "O mercado de FIDCs cresceu de R$ 308 bilhões (2021) para R$ 736 bilhões (2025), um crescimento de ~139%. No mesmo período, o número de fundos saltou de 1.546 para 3.859 e o número de contas de 28 mil para 369 mil."
+  },
+  {
+    text: "Qual a diferença entre um FIDC 'performado' e um FIDC 'a performar'?",
+    options: [
+      "No performado, os recebíveis têm prazo superior a 12 meses",
+      "No performado, o produto ou serviço já foi entregue e o crédito já existe de fato",
+      "O 'a performar' exige subordinação mínima maior pelo maior risco",
+      "No performado, o cedente é sempre uma instituição financeira regulada"
+    ],
+    correct: 1,
+    explanation: "Em um FIDC performado, o bem ou serviço já foi entregue — a dívida é certa (ex: duplicatas, parcelas de cartão). Em um FIDC 'a performar', o crédito depende de uma entrega futura (ex: mensalidades de escola, assinaturas). O 'a performar' carrega risco adicional de descumprimento contratual."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = [];
+
+function render() {
+  const q = questions[current];
+  document.getElementById('qNum').textContent = `Pergunta ${current + 1}`;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('counter').textContent = `${current + 1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(current / questions.length) * 100}%`;
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectOption(i);
+    wrap.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('btnNext').className = 'btn-next';
+}
+
+function selectOption(chosen) {
+  const q = questions[current];
+  const opts = document.querySelectorAll('.option');
+  const fb = document.getElementById('feedback');
+  const letters = ['A', 'B', 'C', 'D'];
+
+  opts.forEach(o => o.classList.add('locked'));
+
+  if (chosen === q.correct) {
+    opts[chosen].classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.innerHTML = `<strong>✓ Correto!</strong> ${q.explanation}`;
+    score++;
+    answered.push(true);
+  } else {
+    opts[chosen].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    opts.forEach((o, i) => { if (i !== chosen && i !== q.correct) o.classList.add('dimmed'); });
+    fb.className = 'feedback nok show';
+    fb.innerHTML = `<strong>✗ Incorreto.</strong> A resposta certa é <strong>${letters[q.correct]}</strong>. ${q.explanation}`;
+    answered.push(false);
+  }
+
+  document.getElementById('btnNext').className = 'btn-next show';
+  document.getElementById('btnNext').textContent = current < questions.length - 1 ? 'Próxima →' : 'Ver resultado →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showScore();
+  } else {
+    render();
+  }
+}
+
+function showScore() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('counter').textContent = `${questions.length} / ${questions.length}`;
+
+  const screen = document.getElementById('scoreScreen');
+  screen.classList.add('show');
+
+  document.getElementById('scoreNum').textContent = score;
+
+  const pct = (score / questions.length) * 100;
+  let title, sub;
+  if (pct === 100) {
+    title = 'Perfeito! 🏆';
+    sub = 'Você domina o conteúdo do curso. Está pronto para o mercado.';
+  } else if (pct >= 80) {
+    title = 'Muito bem!';
+    sub = 'Ótimo domínio do conteúdo. Revise as questões que errou.';
+  } else if (pct >= 60) {
+    title = 'Bom resultado.';
+    sub = 'Você assimilou o essencial. Vale revisar os blocos de FIDC.';
+  } else {
+    title = 'Continue estudando.';
+    sub = 'Revise os materiais dos blocos 2 a 5 e refaça o quiz.';
+  }
+
+  document.getElementById('scoreTitle').textContent = title;
+  document.getElementById('scoreSub').textContent = sub;
+
+  const breakdown = document.getElementById('scoreBreakdown');
+  breakdown.innerHTML = `
+    <span class="score-tag ok">✓ ${score} corretas</span>
+    <span class="score-tag nok">✗ ${questions.length - score} incorretas</span>
+  `;
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  answered = [];
+  document.getElementById('questionCard').style.display = '';
+  document.getElementById('scoreScreen').classList.remove('show');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
