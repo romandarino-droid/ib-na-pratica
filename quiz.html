@@ -241,15 +241,15 @@ const questions = [
     explanation: "O mercado de capitais conecta poupadores a tomadores, transferindo o risco diretamente ao investidor — diferente do crédito bancário, onde o risco fica no balanço do banco."
   },
   {
-    text: "Qual instrumento de renda fixa pode ser usado por qualquer setor da economia para securitizar recebíveis?",
+    text: "Uma empresa de médio porte quer securitizar suas duplicatas mas tem rating abaixo do investment grade. Qual a principal vantagem estrutural do FIDC nesse cenário?",
     options: [
-      "CRI — Certificado de Recebíveis Imobiliários",
-      "CRA — Certificado de Recebíveis do Agronegócio",
-      "Debênture comum",
-      "FIDC — Fundo de Investimento em Direitos Creditórios"
+      "O FIDC dispensa rating para ser registrado na CVM, simplificando o processo",
+      "O custo de captação reflete o risco dos sacados (clientes da empresa), não o risco da própria cedente",
+      "O FIDC elimina a necessidade de garantias reais ou fidejussórias na operação",
+      "A empresa deixa de precisar de balanço auditado durante a vigência do fundo"
     ],
-    correct: 3,
-    explanation: "O FIDC é o único instrumento de securitização sem restrição setorial. Ao contrário do CRI (imobiliário) e CRA (agronegócio), qualquer empresa com recebíveis pode estruturar um FIDC."
+    correct: 1,
+    explanation: "O FIDC 'descola' o custo de funding do risco do cedente. Uma empresa com risco B pode ter clientes (sacados) com risco AA — o fundo é precificado pelo risco desses sacados, tornando a taxa muito mais competitiva do que qualquer captação direta da empresa."
   },
   {
     text: "Em um FIDC com três classes de cotas (Sênior, Mezanino e Subordinada), qual absorve as primeiras perdas da carteira?",
@@ -263,15 +263,15 @@ const questions = [
     explanation: "A Cota Subordinada (JR) absorve as primeiras perdas antes de qualquer impacto na Sênior ou Mezanino. É o 'skin in the game' — geralmente subscrita pelo próprio cedente."
   },
   {
-    text: "Na operação de Risco Sacado, quem é o devedor do FIDC?",
+    text: "Em uma operação de Risco Sacado performada, qual condição é essencial para que o FIDC possa cobrar o recebível diretamente da empresa âncora?",
     options: [
-      "O fornecedor (cedente), que vendeu os bens ou serviços",
-      "A empresa âncora (sacado), que emitiu a ordem de pagamento",
-      "O gestor do fundo, que aprovou a aquisição dos recebíveis",
-      "O administrador, que é o responsável legal perante a CVM"
+      "A empresa âncora deve ter rating mínimo de grau de investimento (BBB-)",
+      "O fornecedor deve manter ao menos 10% das cotas subordinadas do fundo",
+      "O produto ou serviço deve ter sido efetivamente entregue e aceito (nota fiscal confirmada)",
+      "A operação deve ser registrada na B3 com código ISIN próprio antes da cessão"
     ],
-    correct: 1,
-    explanation: "No Risco Sacado, o FIDC compra o recebível com base no risco da empresa âncora (sacado). O fornecedor recebe à vista com desconto; a empresa âncora paga ao FIDC no vencimento."
+    correct: 2,
+    explanation: "No Risco Sacado performado, a entrega já ocorreu — esse é o ponto crítico. Se o bem ou serviço não foi entregue, a empresa âncora pode recusar o pagamento alegando inadimplemento contratual. Por isso a verificação de lastro (NF aceita, confirmação de recebimento) é tão importante na due diligence."
   },
   {
     text: "Qual participante do FIDC é responsável por verificar o lastro dos recebíveis cedidos?",
@@ -296,15 +296,15 @@ const questions = [
     explanation: "Os critérios de elegibilidade filtram quais recebíveis entram no fundo — ex: prazo máximo, concentração máxima por sacado, sacados sem atraso, notas fiscais com CNPJ válido."
   },
   {
-    text: "Qual modalidade de FIDC tem como característica o desconto direto em folha de pagamento de servidores públicos e militares?",
+    text: "Por que o FIDC Multicedente Multisacado (MC/MS) tipicamente exige maior subordinação do que um FIDC de Consignado Público?",
     options: [
-      "MC/MS — Multicedente Multisacado (fomento mercantil digital)",
-      "Consignado Privado — vinculado ao eSocial",
-      "Consignado Público — INSS, SIAPE, Forças Armadas, Estados",
-      "FIDC Imobiliário — lastreado em CCI e contratos de aluguel"
+      "Porque o MC/MS opera com recebíveis de prazo mais longo, aumentando o risco de duration",
+      "Porque a CVM 175 exige subordinação mínima de 30% para FIDCs de fomento mercantil",
+      "Porque os sacados do MC/MS são empresas (frequentemente PMEs) com maior risco de inadimplência, e a qualidade da carteira depende do consultor de fomento",
+      "Porque o Consignado Público tem isenção de IR que reduz a necessidade de proteção estrutural"
     ],
     correct: 2,
-    explanation: "O Consignado Público tem desconto direto em folha com margem consignável de até 45% e inadimplência historicamente controlada. O risco principal é o ente público (CAPAG), não o servidor."
+    explanation: "No MC/MS os sacados são empresas, muitas vezes PMEs, e o risco de crédito é mais disperso e incerto. Além disso, a qualidade da carteira depende muito do consultor de fomento — um ponto de atenção crítico. No Consignado Público, o desconto em folha e o risco do ente público (INSS, Estados) oferecem proteção estrutural muito maior, permitindo subordinações menores."
   },
   {
     text: "Qual a principal vantagem tributária do FIDC para a empresa que emite debênture ou cede recebíveis ao fundo?",
@@ -318,15 +318,15 @@ const questions = [
     explanation: "A empresa deduz a despesa financeira da base de IRPJ + CSLL. Com alíquota combinada de 34%, cada R$ 1,00 de despesa financeira gera R$ 0,34 de economia fiscal real."
   },
   {
-    text: "Qual era o Patrimônio Líquido total do mercado de FIDCs no Brasil em 2025?",
+    text: "Num FIDC de Consignado, a taxa mínima de cessão calculada é de 30% ao ano. Qual a composição correta desse 'piso'?",
     options: [
-      "R$ 308 bilhões — dado de 2021",
-      "R$ 450 bilhões",
-      "R$ 736 bilhões",
-      "R$ 1,2 trilhão"
+      "18% custo da sênior + 9% custo da JR + 3% despesas operacionais",
+      "15% custo da sênior + 12% custo da JR + 1,5% custos operacionais + 1,5% inadimplência esperada",
+      "20% custo da sênior + 8% custo da JR + 2% inadimplência esperada",
+      "12% custo da sênior + 15% custo da JR + 1,5% custos + 1,5% inadimplência"
     ],
-    correct: 2,
-    explanation: "O mercado cresceu de R$ 308bi (2021) para R$ 736bi (2025), alta de ~139%. O número de fundos saltou de 1.546 para 3.859 e o de contas de 28 mil para 369 mil."
+    correct: 1,
+    explanation: "O waterfall do consignado: 15% cota sênior + 12% cota JR + 1,5% custos operacionais + 1,5% inadimplência esperada = 30% taxa mínima de cessão. Abaixo desse piso o deal não 'fecha' — não sobra margem para o cedente e a estrutura deixa de ser viável."
   },
   {
     text: "Qual a diferença entre um FIDC 'performado' e um FIDC 'a performar'?",
