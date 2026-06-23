@@ -303,6 +303,44 @@
 
     .slide-tag { top: 14px; right: 20px; font-size: .68rem; }
   }
+
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+
+    *, *::before, *::after {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    html, body {
+      height: auto !important;
+      overflow: visible !important;
+      background: #0a0f1e !important;
+    }
+
+    #nav, #progress { display: none !important; }
+
+    #deck {
+      height: auto !important;
+      width: 100% !important;
+      position: static !important;
+    }
+
+    .slide {
+      display: flex !important;
+      position: relative !important;
+      width: 100% !important;
+      height: 100vh !important;
+      page-break-after: always !important;
+      break-after: page !important;
+      animation: none !important;
+    }
+
+    .slide:last-child {
+      page-break-after: avoid !important;
+      break-after: avoid !important;
+    }
+  }
 </style>
 </head>
 <body>
